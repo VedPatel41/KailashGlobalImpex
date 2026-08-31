@@ -209,6 +209,10 @@ class SitemapAndRobotsTestCase(TestCase):
         response = self.client.get('/sitemap.xml', HTTP_HOST='vedop.fun')
         self.assertEqual(response.status_code, 200)
         self.assertIn('application/xml', response['Content-Type'])
+        # X-Robots-Tag: noindex must NOT be present (causes Google Search Console read failure)
+        robots_tag = response.headers.get('X-Robots-Tag', '')
+        self.assertNotIn('noindex', robots_tag.lower())
+        self.assertNotIn('noarchive', robots_tag.lower())
 
     def test_sitemap_head_request(self):
         response = self.client.head('/sitemap.xml', HTTP_HOST='vedop.fun')
@@ -222,39 +226,42 @@ class SitemapAndRobotsTestCase(TestCase):
             HTTP_USER_AGENT='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
         )
         self.assertEqual(response.status_code, 200)
+        robots_tag = response.headers.get('X-Robots-Tag', '')
+        self.assertNotIn('noindex', robots_tag.lower())
 
     def test_sitemap_xml_validity_and_urls(self):
-        response = self.client.get('/sitemap.xml', HTTP_HOST='vedop.fun')
-        self.assertEqual(response.status_code, 200)
+        for host in ['vedop.fun', 'kailashglobalimpex.onrender.com', 'localhost']:
+            response = self.client.get('/sitemap.xml', HTTP_HOST=host)
+            self.assertEqual(response.status_code, 200)
 
-        # Parse XML to guarantee strict conformance
-        root = ET.fromstring(response.content)
-        ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
-        loc_elements = root.findall('.//sm:loc', ns)
-        locs = [el.text for el in loc_elements]
+            # Parse XML to guarantee strict conformance
+            root = ET.fromstring(response.content)
+            ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+            loc_elements = root.findall('.//sm:loc', ns)
+            locs = [el.text for el in loc_elements]
 
-        # 8 expected canonical public URLs
-        expected_urls = [
-            'https://vedop.fun/',
-            'https://vedop.fun/about/',
-            'https://vedop.fun/products/',
-            'https://vedop.fun/our-approach/',
-            'https://vedop.fun/certificates/',
-            'https://vedop.fun/contact/',
-            'https://vedop.fun/products/raw-tobacco-leaf/',
-            'https://vedop.fun/products/moringa-leaf-powder/',
-        ]
+            # 8 expected canonical public URLs
+            expected_urls = [
+                'https://vedop.fun/',
+                'https://vedop.fun/about/',
+                'https://vedop.fun/products/',
+                'https://vedop.fun/our-approach/',
+                'https://vedop.fun/certificates/',
+                'https://vedop.fun/contact/',
+                'https://vedop.fun/products/raw-tobacco-leaf/',
+                'https://vedop.fun/products/moringa-leaf-powder/',
+            ]
 
-        self.assertEqual(len(locs), 8)
-        for expected in expected_urls:
-            self.assertIn(expected, locs, f"Missing URL in sitemap: {expected}")
+            self.assertEqual(len(locs), 8)
+            for expected in expected_urls:
+                self.assertIn(expected, locs, f"Missing URL in sitemap for host {host}: {expected}")
 
-        # Inactive product must NOT be in sitemap
-        self.assertNotIn('https://vedop.fun/products/inactive-test-product/', locs)
+            # Inactive product must NOT be in sitemap
+            self.assertNotIn('https://vedop.fun/products/inactive-test-product/', locs)
 
-        # Private / admin / inquiry POST URLs must NOT be in sitemap
-        for private in ['/admin/', '/admin-panel/', '/submit-inquiry/']:
-            self.assertFalse(any(private in loc for loc in locs), f"Private URL found in sitemap: {private}")
+            # Private / admin / inquiry POST URLs must NOT be in sitemap
+            for private in ['/admin/', '/admin-panel/', '/submit-inquiry/']:
+                self.assertFalse(any(private in loc for loc in locs), f"Private URL found in sitemap: {private}")
 
     def test_robots_txt_content_and_sitemap_reference(self):
         response = self.client.get('/robots.txt', HTTP_HOST='vedop.fun')

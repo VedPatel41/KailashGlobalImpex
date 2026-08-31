@@ -5,8 +5,7 @@ from django.conf.urls.static import static
 from django.views.static import serve
 from django.urls import re_path
 
-from django.contrib.sitemaps.views import sitemap
-from core.sitemaps import sitemaps
+from core.views import sitemap_xml
 
 urlpatterns = [
     # Custom Modern Corporate CRM Admin Panel
@@ -16,7 +15,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Standard Root Sitemap
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
     
     # Core Public Website
     path('', include('core.urls', namespace='core')),

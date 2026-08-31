@@ -198,14 +198,12 @@ def submit_inquiry(request):
 
 def robots_txt(request):
     """Dynamic robots.txt view ensuring Googlebot compatibility and correct sitemap reference."""
-    host = request.get_host()
-    scheme = 'https' if not settings.DEBUG else request.scheme
-    content = f"""User-agent: *
+    content = """User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /admin-panel/
 
-Sitemap: {scheme}://{host}/sitemap.xml
+Sitemap: https://vedop.fun/sitemap.xml
 """
     return HttpResponse(content, content_type="text/plain; charset=utf-8")
 
@@ -213,9 +211,15 @@ Sitemap: {scheme}://{host}/sitemap.xml
 def sitemap_xml(request):
     """
     Standard XML sitemap view powered by django.contrib.sitemaps.
-    Returns compliant XML sitemap for search engine crawlers.
+    Ensures clean response headers without restrictive X-Robots-Tag: noindex.
     """
-    return django_sitemap_view(request, sitemaps=sitemaps)
+    response = django_sitemap_view(request, sitemaps=sitemaps)
+    # Remove restrictive X-Robots-Tag so Google Search Console can read, parse, and process the sitemap
+    if 'X-Robots-Tag' in response.headers:
+        del response.headers['X-Robots-Tag']
+    elif 'X-Robots-Tag' in response:
+        del response['X-Robots-Tag']
+    return response
 
 
 def custom_404(request, exception=None):

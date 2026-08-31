@@ -1,6 +1,6 @@
 """
 Django sitemap definitions for Kailash Global Impex.
-Exposes only canonical, public, indexable pages.
+Exposes only canonical, public, indexable pages on https://vedop.fun.
 """
 
 from django.contrib.sitemaps import Sitemap
@@ -8,12 +8,26 @@ from django.urls import reverse
 from .models import Product
 
 
-class StaticViewSitemap(Sitemap):
+class CanonicalSite:
+    """Production canonical site reference for sitemap URL generation."""
+    domain = 'vedop.fun'
+    name = 'Kailash Global Impex'
+
+
+class CanonicalSitemap(Sitemap):
     """
-    Sitemap for public static institutional and marketing pages.
+    Base sitemap enforcing HTTPS protocol and production canonical domain (vedop.fun).
     """
     protocol = 'https'
 
+    def get_urls(self, page=1, site=None, protocol=None):
+        return super().get_urls(page=page, site=CanonicalSite(), protocol='https')
+
+
+class StaticViewSitemap(CanonicalSitemap):
+    """
+    Sitemap for public static institutional and marketing pages.
+    """
     PAGE_CONFIG = {
         'core:home': {'priority': 1.0, 'changefreq': 'weekly'},
         'core:about': {'priority': 0.8, 'changefreq': 'monthly'},
@@ -36,11 +50,10 @@ class StaticViewSitemap(Sitemap):
         return self.PAGE_CONFIG.get(item, {}).get('changefreq', 'monthly')
 
 
-class ProductSitemap(Sitemap):
+class ProductSitemap(CanonicalSitemap):
     """
     Dynamic sitemap for active, publicly cataloged commodity products.
     """
-    protocol = 'https'
     priority = 0.9
     changefreq = 'weekly'
 
@@ -58,3 +71,4 @@ sitemaps = {
     'static': StaticViewSitemap,
     'products': ProductSitemap,
 }
+
