@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.core.files import File
-from core.models import Product, Inquiry
-from pathlib import Path
+from django.conf import settings
+from core.models import Product
 
 User = get_user_model()
 
@@ -17,25 +18,45 @@ class Command(BaseCommand):
         # 1. Ensure Superuser / Staff User
         username = os.environ.get('KGI_ADMIN_USER', 'admin')
         email = os.environ.get('KGI_ADMIN_EMAIL', 'kailashglobalimpex@gmail.com')
-        password = os.environ.get('KGI_ADMIN_PASS', 'Kailash@2026Export')
+        password = os.environ.get('KGI_ADMIN_PASS')
 
         user, created = User.objects.get_or_create(
             username=username,
             defaults={'email': email, 'is_staff': True, 'is_superuser': True}
         )
+
         if created:
-            user.set_password(password)
-            user.save()
-            self.stdout.write(self.style.SUCCESS(f"Created admin user: {username}"))
+            if password:
+                user.set_password(password)
+                user.save()
+                self.stdout.write(self.style.SUCCESS(f"Created admin user: {username} (configured via KGI_ADMIN_PASS)"))
+            else:
+                if settings.DEBUG:
+                    user.set_password('Kailash@2026Export')
+                    user.save()
+                    self.stdout.write(self.style.WARNING(f"Created admin user: {username} (local development mode)"))
+                else:
+                    user.set_unusable_password()
+                    user.save()
+                    self.stdout.write(self.style.WARNING(
+                        f"Created admin user: {username} without password. "
+                        "Set KGI_ADMIN_PASS in Render Environment Variables to enable login."
+                    ))
         else:
             user.is_staff = True
             user.is_superuser = True
-            user.set_password(password)
-            user.save()
-            self.stdout.write(self.style.SUCCESS(f"Updated admin user: {username}"))
+            if email and not user.email:
+                user.email = email
+            if password:
+                user.set_password(password)
+                user.save()
+                self.stdout.write(self.style.SUCCESS(f"Updated admin user: {username} (credentials updated from KGI_ADMIN_PASS)"))
+            else:
+                user.save()
+                self.stdout.write(self.style.SUCCESS(f"Admin user verified: {username} (permissions active)"))
 
         # 2. Seed Authentic Products
-        base_dir = Path(__file__).resolve().parent.parent.parent.parent
+        base_dir = settings.BASE_DIR
         tobacco_asset = base_dir / 'static' / 'images' / 'products' / 'tobacco.png'
         moringa_asset = base_dir / 'static' / 'images' / 'products' / 'moringa.png'
 
@@ -80,7 +101,8 @@ class Command(BaseCommand):
                 'display_order': 1,
             }
         )
-        if tobacco_asset.exists() and not tobacco.image:
+        tobacco_has_file = bool(tobacco.image) and tobacco.image.storage.exists(tobacco.image.name)
+        if tobacco_asset.exists() and not tobacco_has_file:
             with open(tobacco_asset, 'rb') as f:
                 tobacco.image.save('tobacco.png', File(f), save=True)
         self.stdout.write(self.style.SUCCESS("Product ready: Raw Tobacco Leaf"))
@@ -128,7 +150,8 @@ class Command(BaseCommand):
                 'display_order': 2,
             }
         )
-        if moringa_asset.exists() and not moringa.image:
+        moringa_has_file = bool(moringa.image) and moringa.image.storage.exists(moringa.image.name)
+        if moringa_asset.exists() and not moringa_has_file:
             with open(moringa_asset, 'rb') as f:
                 moringa.image.save('moringa.png', File(f), save=True)
         self.stdout.write(self.style.SUCCESS("Product ready: Moringa Leaf Powder"))

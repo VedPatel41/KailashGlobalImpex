@@ -12,4 +12,7 @@ python manage.py collectstatic --no-input
 echo "==> Running database migrations..."
 python manage.py migrate
 
+echo "==> Seeding initial data (products & admin)..."
+python manage.py seed_kgi_data
+
 echo "==> Build completed successfully."
