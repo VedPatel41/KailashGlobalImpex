@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact & Inquiries | Kailash Global Impex{% endblock %}
+
+{% block content %}
+
+<!-- Light Hero Banner -->
+<section class="hero-section" style="padding: 7.5rem 0 3.5rem;">
+  <div class="container text-center">
+    <span class="section-tag">Commercial Desk</span>
+    <h1 class="section-title" style="font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin-bottom: 0.5rem;">
+      Contact & Trade Inquiries
+    </h1>
+    <p class="section-subtitle" style="max-width: 680px; margin: 0 auto;">
+      Connect directly with our partners in Visnagar, Gujarat for commodity inquiries, bulk pricing, and export schedules.
+    </p>
+  </div>
+</section>
+
+<!-- Contact Content Grid -->
+<section class="section section-white">
+  <div class="container container-wide">
+    <div style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 3.5rem; align-items: flex-start;">
+      
+      <!-- Contact Channels (Left) -->
+      <div>
+        <span class="section-tag">Direct Channels</span>
+        <h2 style="font-size: 1.8rem; color: var(--color-forest-dark); margin-bottom: 1.25rem;">Headquarters & Contact</h2>
+        <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem;">
+          We value direct, transparent commercial communication. Reach out via phone, email, or submit the inquiry form.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem;">
+          <!-- Office Location -->
+          <div class="contact-info-card">
+            <div class="contact-icon-box" style="background:#eaf3ee; color:#0f382a;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div class="contact-details">
+              <h4>Headquarters</h4>
+              <p>
+                Visnagar, Mehsana,<br>
+                Gujarat, India - 384315
+              </p>
+            </div>
+          </div>
+
+          <!-- Email (Gmail) -->
+          <div class="contact-info-card">
+            <div class="contact-icon-box" style="background:#fef2f2; color:#dc2626;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div class="contact-details">
+              <h4>Commercial Inquiries (Email)</h4>
+              <p>
+                <a href="mailto:{{ COMPANY_EMAIL }}" style="color: var(--color-forest-deep); font-weight: 600; display:inline-flex; align-items:center; gap:0.35rem;">
+                  {{ COMPANY_EMAIL }} &rarr;
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Phones -->
+          <div class="contact-info-card">
+            <div class="contact-icon-box" style="background:#eaf3ee; color:#0f382a;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div class="contact-details">
+              <h4>Direct Trade Desks</h4>
+              <p>
+                <a href="tel:+919773140138" style="color: var(--color-forest-deep); font-weight: 600;">+91 9773140138</a><br>
+                <a href="tel:+917383311112" style="color: var(--color-forest-deep); font-weight: 600;">+91 73833 11112</a>
+              </p>
+            </div>
+          </div>
+
+          <!-- WhatsApp Direct -->
+          <div class="contact-info-card" style="border-color:#a7f3d0; background:#f0fdf4;">
+            <div class="contact-icon-box" style="background:#25d366; color:#ffffff;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+            </div>
+            <div class="contact-details">
+              <h4>WhatsApp Commercial Line</h4>
+              <p>
+                <a href="https://wa.me/919773140138?text=Hello%20Kailash%20Global%20Impex,%20I%20am%20inquiring%20about%20agricultural%20export%20products." target="_blank" rel="noopener noreferrer" style="color: #059669; font-weight: 700; display:inline-flex; align-items:center; gap:0.35rem;">
+                  Chat on WhatsApp (+91 9773140138) &rarr;
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Instagram -->
+          <div class="contact-info-card">
+            <div class="contact-icon-box" style="background:#fdf2f8; color:#db2777;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </div>
+            <div class="contact-details">
+              <h4>Official Instagram</h4>
+              <p>
+                <a href="{{ COMPANY_INSTAGRAM }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-forest-deep); font-weight: 600; display:inline-flex; align-items:center; gap:0.35rem;">
+                  @kailashglobalimpex &#8599;
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inquiry Form (Right - ONLY place for full inquiry form) -->
+      <div class="inquiry-form-card" id="inquiry-form-section">
+        <span class="section-tag">Trade Inquiry</span>
+        <h2 style="font-size: 1.6rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Submit Trade Request</h2>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.75rem;">
+          Please provide your company details and commodity specifications for commercial evaluation.
+        </p>
+
+        {% if selected_product %}
+          <div style="background: var(--color-bg-softgreen); border-left: 3px solid var(--color-gold-deep); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; color: var(--color-forest-dark);">
+            Selected Commodity: <strong>{{ selected_product }}</strong>
+          </div>
+        {% endif %}
+
+        <form action="{% url 'core:submit_inquiry' %}" method="post" class="js-inquiry-form" novalidate>
+          {% csrf_token %}
+          {{ form.website_url }}
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="{{ form.name.id_for_label }}" class="form-label">Full Name <span class="required">*</span></label>
+              {{ form.name }}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.email.id_for_label }}" class="form-label">Business Email <span class="required">*</span></label>
+              {{ form.email }}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.company_name.id_for_label }}" class="form-label">Company / Trading Entity</label>
+              {{ form.company_name }}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.mobile_number.id_for_label }}" class="form-label">Mobile Number (with country code) <span class="required">*</span></label>
+              {{ form.mobile_number }}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.country.id_for_label }}" class="form-label">Destination Country / Port <span class="required">*</span></label>
+              {{ form.country }}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.product.id_for_label }}" class="form-label">Commodity <span class="required">*</span></label>
+              {{ form.product }}
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="{{ form.product_details.id_for_label }}" class="form-label">Volume & Specifications (e.g. Quantity, Grade, Packaging)</label>
+              {{ form.product_details }}
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="{{ form.remarks.id_for_label }}" class="form-label">Additional Remarks / Shipping Timeline</label>
+              {{ form.remarks }}
+            </div>
+
+            <div class="form-group form-group-full" style="margin-top: 0.75rem;">
+              <button type="submit" class="btn btn-primary btn-block btn-lg">
+                <span>Submit Trade Inquiry</span> &rarr;
+              </button>
+              <p style="font-size:0.78rem; color:var(--text-muted); text-align:center; margin-top:0.75rem;">
+                🔒 Inquiry details are securely processed and saved to our trade system.
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

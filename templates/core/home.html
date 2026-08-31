@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kailash Global Impex | Connecting Markets, Delivering Excellence{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================================
+     1. HERO SECTION (Port & Global Trade Background Slideshow)
+     ========================================================================= -->
+<section class="hero-section hero-port-section" id="hero">
+  <!-- International Trade & Maritime Port Visual Atmosphere (Purely visual representation) -->
+  <div class="hero-slideshow-container" aria-hidden="true">
+    <div class="hero-slide active" style="background-image: url('{% static 'images/hero/port_hero_1.webp' %}');"></div>
+    <div class="hero-slide" style="background-image: url('{% static 'images/hero/port_hero_2.webp' %}');"></div>
+    <div class="hero-slide" style="background-image: url('{% static 'images/hero/port_hero_3.webp' %}');"></div>
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="container container-wide hero-container-relative">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>🇮🇳</span> India-Based Agricultural Export Enterprise
+      </div>
+
+      <h1 class="hero-title">
+        KAILASH <span class="highlight-gold">GLOBAL IMPEX</span>
+      </h1>
+
+      <div class="hero-tagline">
+        Connecting Markets, Delivering Excellence
+      </div>
+
+      <p class="hero-subtitle">
+        Kailash Global Impex is an India-based export company focused on connecting quality agricultural products with international markets. Headquartered in Visnagar, Gujarat, we specialize in buyer-specific sourcing for export-grade Raw Tobacco Leaf and pure Moringa Leaf Powder.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#products-section" class="btn btn-gold btn-lg">Explore Products &darr;</a>
+        <a href="{% url 'core:contact' %}#inquiry-form-section" class="btn btn-outline-light btn-lg">Send Inquiry &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     2. WHY CHOOSE US SECTION (Balanced 3 + 2 Composition)
+     ========================================================================= -->
+<section class="section section-soft" id="why-choose-us">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Value Proposition</span>
+      <h2 class="section-title">Why Choose Us</h2>
+      <p class="section-subtitle">
+        Our commitment to dependable agricultural commodity exports rests on five core principles.
+      </p>
+    </div>
+
+    <!-- 3 + 2 Balanced Grid -->
+    <div class="why-choose-grid-balanced">
+      <!-- Top Row: 3 Cards -->
+      <div class="why-choose-row-3">
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">01</div>
+          <p class="why-choose-text-bold">India-based sourcing with a focus on quality.</p>
+        </div>
+
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">02</div>
+          <p class="why-choose-text-bold">Reliable supplier relationships.</p>
+        </div>
+
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">03</div>
+          <p class="why-choose-text-bold">Buyer-focused product sourcing.</p>
+        </div>
+      </div>
+
+      <!-- Bottom Row: 2 Cards (Centered) -->
+      <div class="why-choose-row-2">
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">04</div>
+          <p class="why-choose-text-bold">Transparent communication and documentation.</p>
+        </div>
+
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">05</div>
+          <p class="why-choose-text-bold">Long-term international business relationships.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     3. FEATURED PRODUCTS SECTION
+     ========================================================================= -->
+<section class="section section-white" id="products-section">
+  <div class="container container-wide">
+    <div class="section-header">
+      <span class="section-tag">Export Commodities</span>
+      <h2 class="section-title">Featured Products</h2>
+      <p class="section-subtitle">
+        Export-grade agricultural products sourced from India for international commercial buyers and processors.
+      </p>
+    </div>
+
+    <div class="products-grid">
+      {% for product in products %}
+      <article class="product-card">
+        <div class="product-image-box">
+          {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
+            <picture>
+              <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" loading="lazy">
+            </picture>
+          {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
+            <picture>
+              <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" loading="lazy">
+            </picture>
+          {% elif product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" loading="lazy">
+          {% endif %}
+          <div class="product-badge">Origin: {{ product.origin }}</div>
+        </div>
+
+        <div class="product-content">
+          {% if product.botanical_name %}
+            <div class="product-botanical">{{ product.botanical_name }}</div>
+          {% endif %}
+          <h3 class="product-name">{{ product.name }}</h3>
+          <p class="product-desc">{{ product.short_description }}</p>
+
+          <div class="product-card-footer">
+            <a href="{% url 'core:product_detail' slug=product.slug %}" class="btn btn-outline-dark btn-sm">Explore Product &rarr;</a>
+            <a href="{% url 'core:contact' %}?product={{ product.slug }}#inquiry-form-section" class="btn btn-gold btn-sm">Inquire Now</a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     4. OUR APPROACH (Source Right -> Match Requirements -> Deliver Reliably)
+     ========================================================================= -->
+<section class="section section-soft" id="our-approach">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Our Sourcing Concept</span>
+      <h2 class="section-title">"Source Right. Match Requirements. Deliver Reliably."</h2>
+      <p class="section-subtitle">
+        Our three-step methodology ensuring disciplined agricultural sourcing and reliable trade fulfillment.
+      </p>
+    </div>
+
+    <div class="approach-process-grid">
+      <!-- Step 1 -->
+      <div class="approach-step-card">
+        <div class="step-number">01</div>
+        <h3 class="step-title">SOURCE RIGHT</h3>
+        <p class="step-desc">
+          Identify and select quality agricultural origins across India with a focus on crop standards, purity, and dependable cultivation networks.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="approach-step-card">
+        <div class="step-number">02</div>
+        <h3 class="step-title">MATCH REQUIREMENTS</h3>
+        <p class="step-desc">
+          Align commodity grading, quality parameters, and packaging strictly to buyer specifications and commercial purchase agreements.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="approach-step-card">
+        <div class="step-number">03</div>
+        <h3 class="step-title">DELIVER RELIABLY</h3>
+        <p class="step-desc">
+          Execute export handling, seaworthy packing, and scheduled shipment dispatch with transparent trade communication and documentation.
+        </p>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top: 2.5rem;">
+      <a href="{% url 'core:our_approach' %}" class="btn btn-outline-dark">Read Full Approach &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     5. GLOBAL TRADE VISUAL (India -> International Markets)
+     ========================================================================= -->
+<section class="trade-visual-section" id="trade-visual">
+  <div class="container container-wide">
+    <div class="trade-visual-container">
+      <div class="section-header" style="margin-bottom: 2rem;">
+        <span class="section-tag" style="color:var(--color-gold-bright);">Global Trade Visual</span>
+        <h2 class="section-title" style="color:#ffffff;">India &rarr; International Markets</h2>
+        <p class="section-subtitle" style="color:#ccd8d1;">
+          Visual representation connecting our Indian sourcing origin with international commercial markets.
+        </p>
+      </div>
+
+      <div class="trade-canvas-wrapper">
+        <canvas id="trade-corridor-canvas"></canvas>
+      </div>
+
+      <p class="trade-disclaimer">
+        Visual representation of Indian agricultural export trade corridors to international commercial markets.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     6. LEADERSHIP (Partners)
+     ========================================================================= -->
+<section class="section section-white" id="leadership">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Leadership</span>
+      <h2 class="section-title">Partners</h2>
+      <p class="section-subtitle">
+        Directed by active partners dedicated to authentic sourcing and long-term buyer relationships.
+      </p>
+    </div>
+
+    <div class="leadership-grid">
+      <!-- Henil Patel -->
+      <div class="leader-card">
+        <div class="leader-image-box">
+          <picture>
+            <source srcset="{% static 'images/founders/henil-patel.webp' %}" type="image/webp">
+            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" loading="lazy">
+          </picture>
+        </div>
+        <div class="leader-info">
+          <h3 class="leader-name">Henil Patel</h3>
+          <span class="leader-role">Partner</span>
+        </div>
+      </div>
+
+      <!-- Nihar Patel -->
+      <div class="leader-card">
+        <div class="leader-image-box">
+          <picture>
+            <source srcset="{% static 'images/founders/nihar-patel.webp' %}" type="image/webp">
+            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" loading="lazy">
+          </picture>
+        </div>
+        <div class="leader-info">
+          <h3 class="leader-name">Nihar Patel</h3>
+          <span class="leader-role">Partner</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     7. INQUIRY CTA STRIP
+     ========================================================================= -->
+<section class="section section-soft" style="padding: 4.5rem 0;">
+  <div class="container container-narrow text-center">
+    <span class="section-tag">Commercial Inquiries</span>
+    <h2 class="section-title">Ready to Discuss Your Sourcing Requirements?</h2>
+    <p class="section-subtitle" style="margin-bottom: 2rem;">
+      Connect directly with our partners to explore grades, bulk availability, packaging, and commercial terms.
+    </p>
+    <a href="{% url 'core:contact' %}#inquiry-form-section" class="btn btn-primary btn-lg">
+      Submit Commercial Inquiry &rarr;
+    </a>
+  </div>
+</section>
+
+{% endblock %}

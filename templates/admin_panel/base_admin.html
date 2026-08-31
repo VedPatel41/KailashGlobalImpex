@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Kailash Global Impex | Enterprise CRM{% endblock %}</title>
+  {% load static %}
+  <link rel="icon" type="image/png" href="{% static 'images/branding/logo.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="admin-sidebar-header">
+        <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Logo" class="sidebar-logo">
+        <div>
+          <div class="brand-title">Kailash <span>CRM</span></div>
+          <div class="brand-subtitle">Trade Portal</div>
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li class="admin-nav-item {% if active_menu == 'dashboard' %}active{% endif %}">
+          <a href="{% url 'admin_panel:dashboard' %}">
+            <span class="nav-icon"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i></span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="admin-nav-item {% if active_menu == 'inquiries' %}active{% endif %}">
+          <a href="{% url 'admin_panel:inquiries_list' %}">
+            <span class="nav-icon"><i data-lucide="inbox" style="width:18px;height:18px;"></i></span>
+            <span>Trade Inquiries</span>
+          </a>
+        </li>
+        <li class="admin-nav-item {% if active_menu == 'products' %}active{% endif %}">
+          <a href="{% url 'admin_panel:products_view' %}">
+            <span class="nav-icon"><i data-lucide="package" style="width:18px;height:18px;"></i></span>
+            <span>Products CMS</span>
+          </a>
+        </li>
+        <li class="admin-nav-item {% if active_menu == 'certificates' %}active{% endif %}">
+          <a href="{% url 'admin_panel:certificates_view' %}">
+            <span class="nav-icon"><i data-lucide="award" style="width:18px;height:18px;"></i></span>
+            <span>Certificates CMS</span>
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="{% url 'core:home' %}" target="_blank">
+            <span class="nav-icon"><i data-lucide="external-link" style="width:18px;height:18px;"></i></span>
+            <span>Public Site &#8599;</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="admin-sidebar-footer">
+        <div class="admin-user-info">
+          <div>
+            <div style="font-weight:600; color:#ffffff; font-size:0.9rem;">
+              {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+            <div style="font-size:0.75rem; color:#94a39b;">Staff Administrator</div>
+          </div>
+          <a href="{% url 'admin_panel:logout' %}" class="admin-btn admin-btn-outline" style="padding:0.35rem 0.75rem; font-size:0.78rem; height:auto; border-color:rgba(255,255,255,0.25); color:#ffffff !important;">
+            Logout
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar Backdrop for Mobile -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <button class="mobile-admin-toggle" id="mobileAdminToggle" aria-label="Toggle Navigation">
+            ☰
+          </button>
+          <h1 class="topbar-heading">{% block topbar_title %}Trade Management Dashboard{% endblock %}</h1>
+        </div>
+        <div class="topbar-actions">
+          <a href="{% url 'core:home' %}" target="_blank" class="admin-btn admin-btn-outline" style="padding:0.45rem 1rem; font-size:0.82rem; height:auto;">
+            <span>View Public Site</span> &#8599;
+          </a>
+        </div>
+      </header>
+
+      <!-- Toast Messages Container -->
+      <div class="toast-container" id="toastContainer">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="admin-toast admin-toast-{{ message.tags }}">
+              <div class="toast-content">
+                <span class="toast-icon">
+                  {% if message.tags == 'error' %}✕{% else %}✓{% endif %}
+                </span>
+                <span>{{ message }}</span>
+              </div>
+              <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <!-- Page Content -->
+      <div class="admin-content-container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <!-- GSAP Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+
+      // Mobile Drawer Toggle
+      const toggle = document.getElementById('mobileAdminToggle');
+      const sidebar = document.getElementById('adminSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+
+      if (toggle && sidebar && backdrop) {
+        toggle.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+          backdrop.classList.toggle('active');
+        });
+        backdrop.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          backdrop.classList.remove('active');
+        });
+      }
+
+      // Auto-dismiss Toasts after 4 seconds
+      const toasts = document.querySelectorAll('.admin-toast');
+      toasts.forEach(toast => {
+        setTimeout(() => {
+          toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(50px)';
+          setTimeout(() => toast.remove(), 400);
+        }, 4000);
+      });
+
+      // Subtle GSAP Animations for Admin Cards
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof gsap !== 'undefined') {
+        gsap.from('.kpi-card', {
+          opacity: 0,
+          y: 15,
+          duration: 0.4,
+          stagger: 0.06,
+          ease: 'power2.out'
+        });
+      }
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

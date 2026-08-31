@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Export Products | Kailash Global Impex{% endblock %}
+
+{% block content %}
+
+<!-- Light Banner -->
+<section class="hero-section" style="padding: 7.5rem 0 3.5rem;">
+  <div class="container text-center">
+    <span class="section-tag">Export Commodities</span>
+    <h1 class="section-title" style="font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin-bottom: 0.5rem;">
+      Agricultural Products
+    </h1>
+    <p class="section-subtitle" style="max-width: 640px; margin: 0 auto;">
+      Export-grade agricultural commodities sourced from India for international commercial buyers and processors.
+    </p>
+  </div>
+</section>
+
+<!-- Product Catalog Grid -->
+<section class="section section-white">
+  <div class="container container-wide">
+    <div class="products-grid">
+      {% for product in products %}
+      <article class="product-card">
+        <div class="product-image-box">
+          {% if product.slug == 'raw-tobacco-leaf' %}
+            <picture>
+              <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" loading="lazy">
+            </picture>
+          {% elif product.slug == 'moringa-leaf-powder' %}
+            <picture>
+              <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" loading="lazy">
+            </picture>
+          {% elif product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" loading="lazy">
+          {% endif %}
+          <div class="product-badge">Origin: {{ product.origin }}</div>
+        </div>
+
+        <div class="product-content">
+          {% if product.botanical_name %}
+            <div class="product-botanical">{{ product.botanical_name }}</div>
+          {% endif %}
+          <h2 class="product-name" style="font-size:1.6rem;">{{ product.name }}</h2>
+          <p class="product-desc">{{ product.short_description }}</p>
+
+          <div class="product-card-footer">
+            <a href="{% url 'core:product_detail' slug=product.slug %}" class="btn btn-outline-dark btn-sm">Explore Product &rarr;</a>
+            <a href="{% url 'core:contact' %}?product={{ product.slug }}#inquiry-form-section" class="btn btn-gold btn-sm">Inquire Now</a>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;">
+        <h3>Catalog update in progress</h3>
+        <p>Please contact our commercial desk for current bulk product availability.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Buyer-Specific Sourcing Advisory -->
+<section class="section section-soft">
+  <div class="container container-narrow text-center">
+    <span class="section-tag">Commercial Procurement</span>
+    <h2 class="section-title">Buyer-Focused Agricultural Sourcing</h2>
+    <p style="color: var(--text-body); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem;">
+      We supply agricultural commodities according to buyer-specific requirements and purchase agreements. Contact our partners directly to discuss specifications, bulk availability, and export packing.
+    </p>
+    <a href="{% url 'core:contact' %}" class="btn btn-primary btn-lg">Submit Your Specifications &rarr;</a>
+  </div>
+</section>
+
+{% endblock %}

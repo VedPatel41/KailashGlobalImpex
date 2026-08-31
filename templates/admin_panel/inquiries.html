@@ -1,0 +1,215 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Trade Inquiries CRM | Kailash Global Impex{% endblock %}
+{% block topbar_title %}Trade Inquiries Management ({{ total_count }}){% endblock %}
+
+{% block content %}
+
+<!-- Filter & Search Toolbar -->
+<div class="admin-filter-card">
+  <form method="get" class="admin-filter-form">
+    <!-- Keyword Search -->
+    <input 
+      type="text" 
+      name="q" 
+      value="{{ q }}" 
+      placeholder="Search by buyer name, company, email, or country..." 
+      class="admin-form-input crm-search-input"
+    >
+
+    <!-- Status Filter -->
+    <select name="status" class="admin-form-select crm-select">
+      <option value="">All Statuses</option>
+      {% for code, label in status_choices %}
+        <option value="{{ code }}" {% if selected_status == code %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Product Filter -->
+    <select name="product" class="admin-form-select crm-select">
+      <option value="">All Commodities</option>
+      {% for val, label in product_choices %}
+        <option value="{{ val }}" {% if selected_product == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Date Filter -->
+    <select name="date_range" class="admin-form-select crm-select">
+      <option value="">All Time</option>
+      <option value="today" {% if selected_date_range == 'today' %}selected{% endif %}>Received Today</option>
+      <option value="7days" {% if selected_date_range == '7days' %}selected{% endif %}>Past 7 Days</option>
+      <option value="30days" {% if selected_date_range == '30days' %}selected{% endif %}>Past 30 Days</option>
+    </select>
+
+    <!-- Sort -->
+    <select name="sort" class="admin-form-select crm-select">
+      <option value="-created_at" {% if selected_sort == '-created_at' %}selected{% endif %}>Newest First</option>
+      <option value="created_at" {% if selected_sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+      <option value="name" {% if selected_sort == 'name' %}selected{% endif %}>Name (A-Z)</option>
+    </select>
+
+    <button type="submit" class="admin-btn admin-btn-primary">
+      Filter
+    </button>
+
+    {% if q or selected_status or selected_product or selected_date_range %}
+      <a href="{% url 'admin_panel:inquiries_list' %}" class="admin-btn admin-btn-outline">
+        Reset
+      </a>
+    {% endif %}
+
+    <a href="{% url 'admin_panel:export_inquiries_csv' %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}" class="admin-btn admin-btn-gold" style="margin-left:auto;">
+      Export CSV &darr;
+    </a>
+  </form>
+</div>
+
+<!-- Inquiries Data Table -->
+<div class="admin-table-card">
+  <!-- Hidden CSRF token for AJAX status updates -->
+  {% csrf_token %}
+  
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date Received</th>
+          <th>Lead / Entity</th>
+          <th>Contact Coordinates</th>
+          <th>Commodity</th>
+          <th>Destination</th>
+          <th>Status</th>
+          <th>Quick Change</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inquiry in inquiries %}
+        <tr>
+          <td><strong>#{{ inquiry.id }}</strong></td>
+          <td style="font-size:0.82rem; color:#62756c;">
+            {{ inquiry.created_at|date:"M d, Y" }}<br>
+            <span style="font-size:0.75rem;">{{ inquiry.created_at|time:"H:i" }}</span>
+          </td>
+          <td>
+            <div style="font-weight:600; color:#16201c;">{{ inquiry.name }}</div>
+            {% if inquiry.company_name %}
+              <div style="font-size:0.8rem; color:#62756c;">{{ inquiry.company_name }}</div>
+            {% endif %}
+          </td>
+          <td style="font-size:0.85rem;">
+            <div><a href="mailto:{{ inquiry.email }}" style="color:#09261e; font-weight:500;">{{ inquiry.email }}</a></div>
+            <div style="color:#62756c;">{{ inquiry.mobile_number }}</div>
+          </td>
+          <td>
+            <span style="font-weight:600; color:#174a38;">{{ inquiry.product }}</span>
+          </td>
+          <td>{{ inquiry.country }}</td>
+          <td>
+            <span class="badge badge-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span>
+          </td>
+          <td>
+            <select 
+              class="admin-form-select js-quick-status" 
+              data-url="{% url 'admin_panel:update_inquiry_status_ajax' pk=inquiry.pk %}"
+              style="height:36px !important; padding:0 0.5rem !important; font-size:0.8rem !important;"
+            >
+              {% for code, label in status_choices %}
+                <option value="{{ code }}" {% if inquiry.status == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <a href="{% url 'admin_panel:inquiry_detail' pk=inquiry.pk %}" class="admin-btn admin-btn-primary" style="height:36px; padding:0 0.85rem; font-size:0.8rem;">
+              Open Detail &rarr;
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" style="text-align:center; padding: 3.5rem 1rem; color:#62756c;">
+            No trade inquiries matched the specified filters.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Bar -->
+  {% if inquiries.has_other_pages %}
+  <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--admin-border); display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem;">
+    <div>
+      Showing page {{ inquiries.number }} of {{ inquiries.paginator.num_pages }}
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      {% if inquiries.has_previous %}
+        <a href="?page={{ inquiries.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_product %}&product={{ selected_product }}{% endif %}" class="admin-btn admin-btn-outline" style="height:36px; padding:0 0.75rem; font-size:0.8rem;">
+          &larr; Previous
+        </a>
+      {% endif %}
+      {% if inquiries.has_next %}
+        <a href="?page={{ inquiries.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_product %}&product={{ selected_product }}{% endif %}" class="admin-btn admin-btn-outline" style="height:36px; padding:0 0.75rem; font-size:0.8rem;">
+          Next &rarr;
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const statusSelects = document.querySelectorAll('.js-quick-status');
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+  statusSelects.forEach(select => {
+    select.addEventListener('change', async () => {
+      const url = select.dataset.url;
+      const newStatus = select.value;
+
+      try {
+        const formData = new FormData();
+        formData.append('status', newStatus);
+        formData.append('csrfmiddlewaretoken', csrfToken);
+
+        const response = await fetch(url, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          }
+        });
+
+        const data = await response.json();
+        if (response.ok && data.success) {
+          // Update row badge
+          const row = select.closest('tr');
+          const badge = row.querySelector('.badge');
+          if (badge) {
+            badge.className = `badge badge-${data.new_status}`;
+            badge.textContent = data.status_display;
+          }
+          // Toast
+          const container = document.getElementById('toastContainer');
+          if (container) {
+            const toast = document.createElement('div');
+            toast.className = 'admin-toast';
+            toast.innerHTML = `<div class="toast-content"><span class="toast-icon">✓</span><span>${data.message}</span></div>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

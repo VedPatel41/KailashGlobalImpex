@@ -1,0 +1,234 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Executive Dashboard | Kailash Global Impex CRM{% endblock %}
+{% block topbar_title %}Enterprise Trade Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- 1. Executive KPIs Grid -->
+<div class="kpi-grid">
+  <!-- Total Inquiries -->
+  <div class="kpi-card">
+    <div class="kpi-icon-box" style="background:#eff6ff; color:#1d4ed8;">
+      <i data-lucide="inbox" style="width:26px;height:26px;"></i>
+    </div>
+    <div>
+      <div class="kpi-label">Total Inquiries</div>
+      <div class="kpi-number">{{ total_inquiries }}</div>
+      <div style="font-size:0.75rem; color:#62756c; margin-top:2px;">All-time logged leads</div>
+    </div>
+  </div>
+
+  <!-- New / Unread -->
+  <div class="kpi-card">
+    <div class="kpi-icon-box" style="background:#fef3c7; color:#b45309;">
+      <i data-lucide="alert-circle" style="width:26px;height:26px;"></i>
+    </div>
+    <div>
+      <div class="kpi-label">New Leads</div>
+      <div class="kpi-number" style="color:#b45309;">{{ new_inquiries }}</div>
+      <div style="font-size:0.75rem; color:#62756c; margin-top:2px;">Requires initial response</div>
+    </div>
+  </div>
+
+  <!-- In Progress / Contacted -->
+  <div class="kpi-card">
+    <div class="kpi-icon-box" style="background:#ecfdf5; color:#047857;">
+      <i data-lucide="check-circle-2" style="width:26px;height:26px;"></i>
+    </div>
+    <div>
+      <div class="kpi-label">Contacted / Quoting</div>
+      <div class="kpi-number" style="color:#047857;">{{ contacted_inquiries }}</div>
+      <div style="font-size:0.75rem; color:#62756c; margin-top:2px;">Active trade negotiations</div>
+    </div>
+  </div>
+
+  <!-- Closed / Contracted -->
+  <div class="kpi-card">
+    <div class="kpi-icon-box" style="background:#f3f4f6; color:#4b5563;">
+      <i data-lucide="archive" style="width:26px;height:26px;"></i>
+    </div>
+    <div>
+      <div class="kpi-label">Closed</div>
+      <div class="kpi-number">{{ closed_inquiries }}</div>
+      <div style="font-size:0.75rem; color:#62756c; margin-top:2px;">Completed inquiry cycles</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. Products Catalog Overview Section -->
+<div style="margin-bottom: 2rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+    <div>
+      <h3 style="font-family:'Outfit', sans-serif; font-size:1.25rem; font-weight:700; color:#09261e;">
+        Export Products Catalog ({{ total_products }})
+      </h3>
+      <p style="font-size:0.85rem; color:#62756c;">
+        Active commodities featured in international commercial trade catalogs.
+      </p>
+    </div>
+    <div style="display:flex; gap:0.5rem;">
+      <a href="{% url 'admin_panel:product_add' %}" class="admin-btn admin-btn-gold" style="height:40px; padding:0 1rem; font-size:0.82rem;">
+        + Add Product
+      </a>
+      <a href="{% url 'admin_panel:products_view' %}" class="admin-btn admin-btn-outline" style="height:40px; padding:0 1rem; font-size:0.82rem;">
+        Manage All &rarr;
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+    {% for prod in products_list %}
+    <div style="background:#ffffff; border:1px solid var(--admin-border); border-radius:var(--radius-lg); padding:1.25rem; display:flex; gap:1rem; align-items:center; box-shadow:var(--shadow-sm);">
+      <div style="width:72px; height:72px; border-radius:var(--radius-md); overflow:hidden; background:#f4f7f5; flex-shrink:0; border:1px solid #e2ece6;">
+        {% if prod.image %}
+          <img src="{{ prod.image.url }}" alt="{{ prod.name }}" style="width:100%; height:100%; object-fit:cover;">
+        {% else %}
+          <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#94a39b;">
+            <i data-lucide="package" style="width:24px;height:24px;"></i>
+          </div>
+        {% endif %}
+      </div>
+      <div style="flex-grow:1; min-width:0;">
+        <div style="font-weight:700; color:#09261e; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+          {{ prod.name }}
+        </div>
+        <div style="font-size:0.78rem; color:#62756c; margin-top:2px;">
+          Origin: {{ prod.origin }}
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem;">
+          {% if prod.is_active %}
+            <span style="font-size:0.7rem; font-weight:700; background:#ecfdf5; color:#047857; padding:0.15rem 0.5rem; border-radius:4px; border:1px solid #a7f3d0;">ACTIVE</span>
+          {% else %}
+            <span style="font-size:0.7rem; font-weight:700; background:#f3f4f6; color:#6b7280; padding:0.15rem 0.5rem; border-radius:4px;">INACTIVE</span>
+          {% endif %}
+          <a href="{% url 'admin_panel:product_edit' pk=prod.pk %}" style="font-size:0.78rem; color:#0f382a; font-weight:600; text-decoration:underline;">Edit</a>
+          <a href="{% url 'core:product_detail' slug=prod.slug %}" target="_blank" style="font-size:0.78rem; color:#62756c;">View &#8599;</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; background:#ffffff; border:1px dashed var(--admin-border); border-radius:var(--radius-lg); padding:2rem; text-align:center; color:#62756c;">
+      No products created yet. Click "+ Add Product" to add commodities to your trade catalog.
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- 3. Two-Column Row: Recent Inquiries + Certificates Overview -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+  
+  <!-- Recent Inquiries Table Card -->
+  <div class="admin-table-card">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h3 style="font-family:'Outfit', sans-serif; font-size:1.15rem; color:#09261e; font-weight:700;">
+          Recent Trade Inquiries
+        </h3>
+        <p style="font-size:0.82rem; color:#62756c;">Latest incoming global commercial inquiries</p>
+      </div>
+      <a href="{% url 'admin_panel:inquiries_list' %}" class="admin-btn admin-btn-outline" style="height:36px; padding:0 0.85rem; font-size:0.8rem;">
+        View All ({{ total_inquiries }}) &rarr;
+      </a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Buyer / Entity</th>
+            <th>Commodity</th>
+            <th>Country</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inq in recent_inquiries %}
+          <tr>
+            <td>
+              <div style="font-weight:600; color:#16201c;">{{ inq.name }}</div>
+              <div style="font-size:0.75rem; color:#62756c;">{{ inq.company_name|default:"Individual Buyer" }}</div>
+            </td>
+            <td><span style="font-weight:500; font-size:0.85rem;">{{ inq.product }}</span></td>
+            <td style="font-size:0.85rem;">{{ inq.country }}</td>
+            <td style="font-size:0.78rem; color:#62756c;">{{ inq.created_at|date:"M d, Y" }}</td>
+            <td><span class="badge badge-{{ inq.status }}">{{ inq.get_status_display }}</span></td>
+            <td>
+              <a href="{% url 'admin_panel:inquiry_detail' pk=inq.pk %}" class="admin-btn admin-btn-primary" style="height:32px; padding:0 0.7rem; font-size:0.75rem;">
+                Open &rarr;
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" style="text-align:center; padding: 2.5rem 1rem; color:#62756c;">
+              No inquiries received yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Certificates Overview Card -->
+  <div style="background:#ffffff; border:1px solid var(--admin-border); border-radius:var(--radius-lg); padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--shadow-sm);">
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+        <div>
+          <h3 style="font-family:'Outfit', sans-serif; font-size:1.15rem; font-weight:700; color:#09261e;">
+            Compliance & Quality
+          </h3>
+          <p style="font-size:0.82rem; color:#62756c;">Certifications status</p>
+        </div>
+        <a href="{% url 'admin_panel:certificate_add' %}" class="admin-btn admin-btn-gold" style="height:34px; padding:0 0.75rem; font-size:0.78rem;">
+          + Add
+        </a>
+      </div>
+
+      {% if certificates_list %}
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          {% for cert in certificates_list %}
+          <div style="padding:0.75rem; border:1px solid var(--admin-border); border-radius:var(--radius-md); background:#fafcfb; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:600; font-size:0.88rem; color:#09261e;">{{ cert.title }}</div>
+              <div style="font-size:0.75rem; color:#62756c;">
+                {% if cert.is_active %}
+                  <span style="color:#047857; font-weight:600;">Published</span>
+                {% else %}
+                  <span style="color:#9ca3af;">Draft / Unpublished</span>
+                {% endif %}
+              </div>
+            </div>
+            <a href="{% url 'admin_panel:certificate_edit' pk=cert.pk %}" style="font-size:0.78rem; color:#0f382a; font-weight:600; text-decoration:underline;">Edit</a>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div style="background:#f4f7f5; border:1.5px dashed var(--admin-border); border-radius:var(--radius-md); padding:2rem 1rem; text-align:center;">
+          <div style="width:40px; height:40px; background:#e2ece6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 0.75rem; color:#0f382a;">
+            <i data-lucide="award" style="width:20px;height:20px;"></i>
+          </div>
+          <div style="font-family:'Outfit', sans-serif; font-weight:700; color:#09261e; font-size:1rem;">
+            Quality & Compliance
+          </div>
+          <div style="font-size:0.8rem; color:#62756c; margin-top:0.25rem;">
+            Public portal shows <strong>"COMING SOON"</strong> until official certificates are added and activated.
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--admin-border);">
+      <a href="{% url 'admin_panel:certificates_view' %}" class="admin-btn admin-btn-outline" style="width:100%; height:38px; font-size:0.82rem; justify-content:center;">
+        Manage All Certificates &rarr;
+      </a>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

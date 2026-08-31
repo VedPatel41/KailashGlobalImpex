@@ -1,0 +1,214 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}{{ action_title }} | CRM{% endblock %}
+{% block topbar_title %}{{ action_title }}{% endblock %}
+
+{% block content %}
+
+<div style="margin-bottom: 1.5rem;">
+  <a href="{% url 'admin_panel:products_view' %}" style="font-size:0.88rem; color:#62756c; text-decoration:none; display:inline-flex; align-items:center; gap:0.35rem;">
+    &larr; Back to Products Catalog
+  </a>
+</div>
+
+<div class="admin-cms-form-card">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <!-- 1. PRODUCT INFORMATION -->
+    <div class="cms-form-section">
+      <div class="cms-section-header">
+        <span class="cms-section-num">01</span>
+        <div>
+          <h3 class="cms-section-title">Product Information</h3>
+          <p class="cms-section-sub">Basic identification and commercial naming.</p>
+        </div>
+      </div>
+
+      <div class="cms-fields-grid">
+        <div class="cms-field-group">
+          <label class="admin-form-label">Product Name <span class="required">*</span></label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="field-error">{{ form.name.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group">
+          <label class="admin-form-label">URL Slug (e.g. raw-tobacco-leaf)</label>
+          {{ form.slug }}
+          <span class="field-hint">Leave blank to auto-generate from product name.</span>
+          {% if form.slug.errors %}<div class="field-error">{{ form.slug.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Tagline / Short Subtitle</label>
+          {{ form.tagline }}
+          {% if form.tagline.errors %}<div class="field-error">{{ form.tagline.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Short Description (Catalog cards & meta summary)</label>
+          {{ form.short_description }}
+          {% if form.short_description.errors %}<div class="field-error">{{ form.short_description.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PRODUCT CONTENT -->
+    <div class="cms-form-section">
+      <div class="cms-section-header">
+        <span class="cms-section-num">02</span>
+        <div>
+          <h3 class="cms-section-title">Product Content & Highlights</h3>
+          <p class="cms-section-sub">Detailed overview and key selling points.</p>
+        </div>
+      </div>
+
+      <div class="cms-fields-grid">
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Detailed Product Overview</label>
+          {{ form.overview }}
+          {% if form.overview.errors %}<div class="field-error">{{ form.overview.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Key Highlights (Enter one point per line)</label>
+          {{ form.key_highlights }}
+          <span class="field-hint">Each line will render as a checkmark bullet point on the public page.</span>
+          {% if form.key_highlights.errors %}<div class="field-error">{{ form.key_highlights.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Applications & Commercial End Uses</label>
+          {{ form.applications }}
+          {% if form.applications.errors %}<div class="field-error">{{ form.applications.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. PRODUCT ATTRIBUTES -->
+    <div class="cms-form-section">
+      <div class="cms-section-header">
+        <span class="cms-section-num">03</span>
+        <div>
+          <h3 class="cms-section-title">Product Attributes</h3>
+          <p class="cms-section-sub">Origin and botanical classification.</p>
+        </div>
+      </div>
+
+      <div class="cms-fields-grid">
+        <div class="cms-field-group">
+          <label class="admin-form-label">Origin Country / Region <span class="required">*</span></label>
+          {{ form.origin }}
+          {% if form.origin.errors %}<div class="field-error">{{ form.origin.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group">
+          <label class="admin-form-label">Botanical Name (Optional)</label>
+          {{ form.botanical_name }}
+          <span class="field-hint">e.g. Nicotiana tabacum / Moringa oleifera</span>
+          {% if form.botanical_name.errors %}<div class="field-error">{{ form.botanical_name.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group">
+          <label class="admin-form-label">Part Used (Optional)</label>
+          {{ form.part_used }}
+          <span class="field-hint">e.g. Leaf / Leaf Powder / Seeds</span>
+          {% if form.part_used.errors %}<div class="field-error">{{ form.part_used.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SOURCING & PACKAGING -->
+    <div class="cms-form-section">
+      <div class="cms-section-header">
+        <span class="cms-section-num">04</span>
+        <div>
+          <h3 class="cms-section-title">Sourcing & Export Packaging</h3>
+          <p class="cms-section-sub">Handling parameters and export packing notes.</p>
+        </div>
+      </div>
+
+      <div class="cms-fields-grid">
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Quality & Handling Parameters</label>
+          {{ form.quality_parameters }}
+          {% if form.quality_parameters.errors %}<div class="field-error">{{ form.quality_parameters.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group cms-col-full">
+          <label class="admin-form-label">Export Packaging Details</label>
+          {{ form.packaging_details }}
+          {% if form.packaging_details.errors %}<div class="field-error">{{ form.packaging_details.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. MEDIA UPLOAD -->
+    <div class="cms-form-section">
+      <div class="cms-section-header">
+        <span class="cms-section-num">05</span>
+        <div>
+          <h3 class="cms-section-title">Product Image</h3>
+          <p class="cms-section-sub">High-resolution commodity photograph (PNG, JPG, WEBP).</p>
+        </div>
+      </div>
+
+      <div class="cms-fields-grid">
+        <div class="cms-field-group cms-col-full">
+          {% if product and product.image %}
+            <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; background: #f0f5f2; padding: 0.75rem 1rem; border-radius: 8px;">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #09261e;">Current Uploaded Image</div>
+                <div style="font-size: 0.78rem; color: #62756c;">Select a new file below to replace.</div>
+              </div>
+            </div>
+          {% endif %}
+          {{ form.image }}
+          {% if form.image.errors %}<div class="field-error">{{ form.image.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. PUBLISHING CONTROLS -->
+    <div class="cms-form-section">
+      <div class="cms-section-header">
+        <span class="cms-section-num">06</span>
+        <div>
+          <h3 class="cms-section-title">Publishing & Visibility</h3>
+          <p class="cms-section-sub">Public availability and catalog ordering.</p>
+        </div>
+      </div>
+
+      <div class="cms-fields-grid">
+        <div class="cms-field-group">
+          <label class="admin-form-label">Display Order</label>
+          {{ form.display_order }}
+          <span class="field-hint">Lower numbers appear first in the catalog.</span>
+          {% if form.display_order.errors %}<div class="field-error">{{ form.display_order.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="cms-field-group" style="display: flex; align-items: center; gap: 0.75rem; margin-top: 1.75rem;">
+          {{ form.is_active }}
+          <label for="{{ form.is_active.id_for_label }}" style="font-weight: 600; color: #09261e; cursor: pointer;">
+            Active on Public Website
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT ACTIONS -->
+    <div class="cms-actions-bar">
+      <button type="submit" class="admin-btn admin-btn-gold">
+        <span>Save Product</span> &rarr;
+      </button>
+      <a href="{% url 'admin_panel:products_view' %}" class="admin-btn admin-btn-outline">
+        Cancel
+      </a>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}500 - Server Error | Kailash Global Impex{% endblock %}
+
+{% block content %}
+
+<section class="section" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8rem 1.5rem 5rem;">
+  <div class="container container-narrow">
+    <div style="font-family: var(--font-heading); font-size: clamp(4rem, 10vw, 8rem); font-weight: 800; color: rgba(9, 38, 30, 0.15); line-height: 1; margin-bottom: 1rem;">
+      500
+    </div>
+    <span class="section-tag">Internal System Exception</span>
+    <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 1rem;">
+      Server Encountered An Issue
+    </h1>
+    <p style="font-size: 1.05rem; color: var(--neutral-600); max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.6;">
+      An unexpected internal condition occurred. Our technical operations team has been notified.
+    </p>
+
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="{% url 'core:home' %}" class="btn btn-primary btn-lg">&larr; Return to Homepage</a>
+      <a href="{% url 'core:contact' %}" class="btn btn-outline-dark btn-lg">Contact Trade Desk</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

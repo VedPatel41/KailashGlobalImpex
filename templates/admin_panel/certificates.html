@@ -1,0 +1,86 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Certificates Management CMS | Kailash CRM{% endblock %}
+{% block topbar_title %}Certificates & Compliance CMS{% endblock %}
+
+{% block content %}
+
+<div class="admin-table-card">
+  <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h3 style="font-family:'Outfit', sans-serif; font-size:1.15rem; color:#09261e; font-weight:700;">
+        Compliance Certificates ({{ certificates.count }})
+      </h3>
+      <p style="font-size:0.85rem; color:#62756c; margin-top:0.2rem;">
+        Active certificates will automatically appear on the public /certificates/ portal instead of the Coming Soon notice.
+      </p>
+    </div>
+    <a href="{% url 'admin_panel:certificate_add' %}" class="admin-btn admin-btn-gold" style="font-size:0.85rem;">
+      + Add New Certificate
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Certificate Title</th>
+          <th>Description / Authority</th>
+          <th>Issue Date</th>
+          <th>Expiry Date</th>
+          <th>Status</th>
+          <th>Document</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cert in certificates %}
+        <tr>
+          <td><strong>{{ cert.title }}</strong></td>
+          <td style="font-size:0.85rem; color:#62756c;">{{ cert.description|truncatewords:15|default:"—" }}</td>
+          <td style="font-size:0.85rem;">{{ cert.issue_date|default:"—" }}</td>
+          <td style="font-size:0.85rem;">{{ cert.expiry_date|default:"—" }}</td>
+          <td>
+            {% if cert.is_active %}
+              <span class="badge badge-CONTACTED">Published</span>
+            {% else %}
+              <span class="badge badge-CLOSED">Unpublished</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if cert.document %}
+              <a href="{{ cert.document.url }}" target="_blank" style="color:#0f382a; font-size:0.82rem; text-decoration:underline;">
+                View File &#8599;
+              </a>
+            {% else %}
+              <span style="color:#94a39b; font-size:0.8rem;">No file</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex; gap:0.4rem; align-items:center;">
+              <a href="{% url 'admin_panel:certificate_edit' pk=cert.pk %}" class="admin-btn admin-btn-primary" style="padding:0.35rem 0.65rem; font-size:0.78rem;">
+                Edit
+              </a>
+              <a href="{% url 'admin_panel:certificate_toggle' pk=cert.pk %}" class="admin-btn admin-btn-outline" style="padding:0.35rem 0.65rem; font-size:0.78rem;">
+                {% if cert.is_active %}Hide{% else %}Publish{% endif %}
+              </a>
+              <a href="{% url 'admin_panel:certificate_delete' pk=cert.pk %}" class="admin-btn" style="padding:0.35rem 0.65rem; font-size:0.78rem; color:#dc2626; border-color:rgba(220,38,38,0.3); background:transparent;">
+                ✕
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; padding: 3rem 1rem; color:#62756c;">
+            No certificates currently registered. The public <code>/certificates/</code> page is actively displaying the professional <strong>Quality & Compliance — COMING SOON</strong> portal.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

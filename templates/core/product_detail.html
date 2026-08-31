@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | Kailash Global Impex{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================================
+     1. LIGHT PRODUCT HERO SECTION
+     ========================================================================= -->
+<section class="product-hero-light">
+  <div class="container container-wide">
+    <div class="product-hero-inner">
+      <!-- Left: Product Text & Inquire CTA -->
+      <div class="product-hero-text">
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          <a href="{% url 'core:home' %}" style="color: var(--color-forest-deep); font-weight: 500;">Home</a> &nbsp;/&nbsp;
+          <a href="{% url 'core:product_list' %}" style="color: var(--color-forest-deep); font-weight: 500;">Products</a> &nbsp;/&nbsp;
+          <span>{{ product.name }}</span>
+        </div>
+
+        <span class="product-hero-tag">Product &bull; Indian Origin</span>
+        <h1 class="product-hero-title">{{ product.name }}</h1>
+        
+        {% if product.botanical_name %}
+          <div class="product-hero-botanical">Botanical Name: {{ product.botanical_name }}</div>
+        {% endif %}
+
+        <p class="product-hero-desc">
+          {{ product.short_description }}
+        </p>
+
+        <a href="{% url 'core:contact' %}?product={{ product.slug }}#inquiry-form-section" class="btn btn-gold btn-lg">
+          Inquire Now &rarr;
+        </a>
+      </div>
+
+      <!-- Right: Prominent Authentic Product Image -->
+      <div class="product-hero-image-box">
+        {% if product.slug == 'raw-tobacco-leaf' %}
+          <picture>
+            <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
+            <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf - Kailash Global Impex">
+          </picture>
+        {% elif product.slug == 'moringa-leaf-powder' %}
+          <picture>
+            <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
+            <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder - Kailash Global Impex">
+          </picture>
+        {% elif product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     2. PRODUCT OVERVIEW
+     ========================================================================= -->
+<section class="section section-white">
+  <div class="container container-narrow">
+    <span class="section-tag">Overview</span>
+    <h2 class="section-title">Product Overview</h2>
+    <p style="font-size: 1.08rem; color: var(--text-body); line-height: 1.8;">
+      {{ product.overview }}
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================================
+     3. KEY HIGHLIGHTS
+     ========================================================================= -->
+{% if product.highlights_list %}
+<section class="section section-soft">
+  <div class="container container-narrow">
+    <span class="section-tag">Key Details</span>
+    <h2 class="section-title">Key Highlights</h2>
+    <div style="background: var(--color-bg-purewhite); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); padding: 2rem; box-shadow: var(--shadow-sm); margin-top: 1.5rem;">
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
+        {% for item in product.highlights_list %}
+          <li style="display: flex; align-items: flex-start; gap: 0.85rem; font-size: 1rem; color: var(--text-dark);">
+            <span style="color: var(--color-gold-deep); font-weight: 800; font-size: 1.1rem;">✓</span>
+            <span style="font-weight: 500;">{{ item }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- =========================================================================
+     4. BUYER REQUIREMENTS & SOURCING
+     ========================================================================= -->
+<section class="section section-white">
+  <div class="container container-narrow">
+    <span class="section-tag">Customized Procurement</span>
+    <h2 class="section-title">Buyer Requirements & Sourcing</h2>
+    
+    <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 2rem;">
+      {% if product.slug == 'raw-tobacco-leaf' %}
+      <div>
+        <h3 style="font-size: 1.25rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Buyer-Specific Sourcing</h3>
+        <p style="color: var(--text-body); line-height: 1.7;">
+          Sourced according to specific buyer parameters including tobacco type, grade, quality parameters, and intended commercial end use. Sourcing consistency is prioritized to ensure alignment with contract specifications.
+        </p>
+      </div>
+
+      <div>
+        <h3 style="font-size: 1.25rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Bulk Export Supply</h3>
+        <p style="color: var(--text-body); line-height: 1.7;">
+          Bulk export capability is subject to product availability and specific buyer order requirements.
+        </p>
+      </div>
+      {% elif product.slug == 'moringa-leaf-powder' %}
+      <div>
+        <h3 style="font-size: 1.25rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Buyer-Specific Requirements</h3>
+        <p style="color: var(--text-body); line-height: 1.7;">
+          Supplied according to buyer-specific requirements and commercial applications including food, ingredient, and plant-based formulations.
+        </p>
+      </div>
+
+      <div>
+        <h3 style="font-size: 1.25rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Bulk Supply Capability</h3>
+        <p style="color: var(--text-body); line-height: 1.7;">
+          Prepared and supplied in bulk quantities for international commercial buyers.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     5. SOURCING / HANDLING / PACKING
+     ========================================================================= -->
+<section class="section section-soft">
+  <div class="container container-narrow">
+    <span class="section-tag">Logistics & Handling</span>
+    <h2 class="section-title">Sourcing, Handling & Packing</h2>
+    
+    <div style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+      <div style="background: var(--color-bg-purewhite); padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.2rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Handling & Quality</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.65; margin: 0;">
+          {{ product.quality_parameters|default:"Commodity handling and quality checks are aligned with buyer specifications and export readiness." }}
+        </p>
+      </div>
+
+      <div style="background: var(--color-bg-purewhite); padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.2rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">Export Packaging</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.65; margin: 0;">
+          {{ product.packaging_details|default:"Packaging according to buyer requirements and international shipping standards." }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     6. PRODUCT INQUIRY CTA
+     ========================================================================= -->
+<section class="section section-white" style="text-align: center; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+  <div class="container container-narrow">
+    <span class="section-tag">Commercial Procurement</span>
+    <h2 class="section-title">Inquire About {{ product.name }}</h2>
+    <p class="section-subtitle" style="margin-bottom: 2rem;">
+      Connect directly with our export desk to discuss quantities, grade requirements, and commercial terms.
+    </p>
+    <a href="{% url 'core:contact' %}?product={{ product.slug }}#inquiry-form-section" class="btn btn-primary btn-lg">
+      Inquire About This Product &rarr;
+    </a>
+  </div>
+</section>
+
+<!-- =========================================================================
+     7. RELATED PRODUCT
+     ========================================================================= -->
+{% if other_products %}
+<section class="section section-soft">
+  <div class="container container-wide">
+    <div class="section-header">
+      <span class="section-tag">Related Product</span>
+      <h2 class="section-title">Other Export Commodities</h2>
+    </div>
+
+    <div class="products-grid" style="max-width: 500px; margin: 0 auto;">
+      {% for item in other_products %}
+      <article class="product-card">
+        <div class="product-image-box">
+          {% if item.slug == 'raw-tobacco-leaf' %}
+            <picture>
+              <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf - Kailash Global Impex" loading="lazy">
+            </picture>
+          {% elif item.slug == 'moringa-leaf-powder' %}
+            <picture>
+              <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder - Kailash Global Impex" loading="lazy">
+            </picture>
+          {% elif item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
+          {% endif %}
+          <div class="product-badge">Origin: {{ item.origin }}</div>
+        </div>
+        <div class="product-content">
+          <h3 class="product-name">{{ item.name }}</h3>
+          <p class="product-desc">{{ item.short_description }}</p>
+          <div class="product-card-footer">
+            <a href="{% url 'core:product_detail' slug=item.slug %}" class="btn btn-outline-dark btn-sm">View Product &rarr;</a>
+            <a href="{% url 'core:contact' %}?product={{ item.slug }}#inquiry-form-section" class="btn btn-gold btn-sm">Inquire Now</a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Confirm Deletion | Kailash CRM{% endblock %}
+{% block topbar_title %}Confirm Deletion: {{ item_name }}{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 580px; margin: 2rem auto;">
+  <div class="detail-card" style="border-left: 4px solid #e53e3e; text-align: center; padding: 2.5rem 2rem;">
+    <div style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1.25rem;">
+      ⚠️
+    </div>
+
+    <h2 style="font-size: 1.4rem; color: #09261e; margin-bottom: 0.75rem;">
+      Delete {{ item_type }}?
+    </h2>
+
+    <p style="color: #62756c; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.75rem;">
+      Are you sure you want to permanently delete <strong>"{{ item_name }}"</strong>? This action cannot be undone.
+    </p>
+
+    <form method="post" style="display: flex; justify-content: center; gap: 1rem;">
+      {% csrf_token %}
+      <a href="{% url cancel_url %}" class="admin-btn admin-btn-outline" style="min-width: 140px;">
+        Cancel
+      </a>
+      <button type="submit" class="admin-btn" style="background: #dc2626; color: #ffffff; border-color: #dc2626; min-width: 140px;">
+        Yes, Delete
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

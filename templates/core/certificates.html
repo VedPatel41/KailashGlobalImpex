@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Certificates & Compliance | Kailash Global Impex{% endblock %}
+
+{% block content %}
+
+<!-- Light Hero Banner -->
+<section class="hero-section" style="padding: 7.5rem 0 3.5rem;">
+  <div class="container text-center">
+    <span class="section-tag">Quality & Compliance</span>
+    <h1 class="section-title" style="font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin-bottom: 0.5rem;">
+      Certificates
+    </h1>
+    <p class="section-subtitle" style="max-width: 680px; margin: 0 auto;">
+      Quality standards and export compliance documentation.
+    </p>
+  </div>
+</section>
+
+<!-- Certificates Section -->
+<section class="section section-white">
+  <div class="container">
+    {% if has_certificates %}
+      <!-- Dynamic list of active certificates when added via Django Admin -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        {% for cert in certificates %}
+        <div style="background: var(--color-bg-purewhite); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--color-forest-deep); background:var(--color-bg-softgreen); padding:0.3rem 0.8rem; border-radius:var(--radius-full);">
+              Verified Certificate
+            </span>
+            {% if cert.issue_date %}
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Issued: {{ cert.issue_date|date:"M Y" }}</span>
+            {% endif %}
+          </div>
+          <h3 style="font-size: 1.3rem; color: var(--color-forest-dark); margin-bottom: 0.75rem;">{{ cert.title }}</h3>
+          {% if cert.description %}
+            <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+              {{ cert.description }}
+            </p>
+          {% endif %}
+          {% if cert.document %}
+            <a href="{{ cert.document.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm">
+              View Document &rarr;
+            </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- Premium Intentional "Coming Soon" State -->
+      <div class="compliance-coming-soon">
+        <div style="width:64px; height:64px; border-radius:50%; background:var(--color-bg-softgreen); color:var(--color-forest-deep); display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin: 0 auto 1.5rem; border:1px solid rgba(23,74,56,0.15);">
+          📜
+        </div>
+
+        <span class="section-tag" style="margin-bottom: 0.75rem;">Quality & Compliance</span>
+
+        <h2 style="font-size: 2.2rem; color: var(--color-forest-dark); margin-bottom: 1rem; font-weight: 800;">
+          CERTIFICATES
+        </h2>
+
+        <p style="font-size: 1.1rem; color: var(--text-body); line-height: 1.7; max-width: 540px; margin: 0 auto 2rem;">
+          Our certifications and relevant compliance documents will be available here soon.
+        </p>
+
+        <div style="display: inline-block; background: var(--color-forest-deep); color: var(--color-gold-bright); font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 0.75rem 2.25rem; border-radius: var(--radius-full); border: 1px solid var(--color-gold-bright); margin-bottom: 2rem;">
+          COMING SOON
+        </div>
+
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 1.75rem; margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+          For specific destination regulatory inquiries or buyer compliance requests, please contact our export desk directly.
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <a href="{% url 'core:contact' %}" class="btn btn-primary">Contact Compliance Desk &rarr;</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

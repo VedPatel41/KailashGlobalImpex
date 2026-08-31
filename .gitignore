@@ -1,0 +1,48 @@
+# Python byte code & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Django local database & static artifacts
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3-shm
+db.sqlite3-wal
+*.sqlite3
+staticfiles/
+
+# Local data backup fixtures (do NOT commit sensitive user/inquiry data)
+data_dump.json
+*.dump
+*.sql
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# Media uploads (keep certificates folder tracked via .gitkeep)
+media/certificates/*
+!media/certificates/.gitkeep
+
+# IDEs and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.log

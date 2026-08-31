@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Kailash Global Impex{% endblock %}
+
+{% block content %}
+
+<!-- Light Green Hero Banner -->
+<section class="hero-section" style="padding: 7.5rem 0 3.5rem;">
+  <div class="container text-center">
+    <span class="section-tag">Company Profile</span>
+    <h1 class="section-title" style="font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin-bottom: 0.5rem;">
+      About Kailash Global Impex
+    </h1>
+    <p class="section-subtitle" style="max-width: 680px; margin: 0 auto;">
+      {{ COMPANY_TAGLINE }}
+    </p>
+  </div>
+</section>
+
+<!-- Corporate Profile -->
+<section class="section section-white">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center;">
+      <div>
+        <span class="section-tag">Corporate Profile</span>
+        <h2 class="section-title">Connecting Indian Agriculture to International Markets</h2>
+        <p style="font-size: 1.05rem; color: var(--text-body); line-height: 1.7; margin-bottom: 1.25rem;">
+          <strong>Kailash Global Impex</strong> is an India-based export company focused on connecting quality agricultural products with international markets. Headquartered in Visnagar, Gujarat, we operate with a commitment to disciplined sourcing, reliable supplier relationships, and buyer-focused fulfillment.
+        </p>
+        <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem;">
+          Our export operations specialize in <strong>Raw Tobacco Leaf</strong> and <strong>Moringa Leaf Powder</strong>, sourced from established agricultural belts across India and prepared to meet buyer-specific commercial requirements.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="{% url 'core:product_list' %}" class="btn btn-primary">Explore Products &rarr;</a>
+          <a href="{% url 'core:our_approach' %}" class="btn btn-outline-dark">Our Approach</a>
+        </div>
+      </div>
+
+      <div style="background: var(--color-bg-softgreen); border: 1.5px solid var(--border-green); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.3rem; margin-bottom: 1.25rem; color: var(--color-forest-dark);">Company Information</h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem;">
+          <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <span style="color: var(--color-gold-deep); font-weight: 700;">📍</span>
+            <div><strong>Location:</strong> Visnagar, Mehsana, Gujarat, India - 384315</div>
+          </li>
+          <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <span style="color: var(--color-gold-deep); font-weight: 700;">🌐</span>
+            <div><strong>Business Focus:</strong> International Agricultural Export</div>
+          </li>
+          <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <span style="color: var(--color-gold-deep); font-weight: 700;">🌾</span>
+            <div><strong>Key Products:</strong> Raw Tobacco Leaf & Moringa Leaf Powder</div>
+          </li>
+          <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <span style="color: var(--color-gold-deep); font-weight: 700;">🤝</span>
+            <div><strong>Leadership:</strong> Henil Patel & Nihar Patel (Partners)</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Vision & Mission -->
+<section class="section section-soft">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;">
+      <div style="background: var(--color-bg-purewhite); padding: 2.5rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-green); box-shadow: var(--shadow-sm);">
+        <span class="section-tag">Our Vision</span>
+        <h3 style="font-size: 1.5rem; color: var(--color-forest-dark); margin-bottom: 1rem;">Connecting Markets Globally</h3>
+        <p style="color: var(--text-body); line-height: 1.7; margin: 0;">
+          To be a dependable Indian export partner for international commercial buyers, recognized for quality agricultural commodities, transparent trade communication, and long-term business relationships.
+        </p>
+      </div>
+
+      <div style="background: var(--color-bg-purewhite); padding: 2.5rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-green); box-shadow: var(--shadow-sm);">
+        <span class="section-tag">Our Mission</span>
+        <h3 style="font-size: 1.5rem; color: var(--color-forest-dark); margin-bottom: 1rem;">Delivering Excellence</h3>
+        <p style="color: var(--text-body); line-height: 1.7; margin: 0;">
+          To source quality agricultural products across India, match buyer-specific specifications and packaging requirements, and execute reliable export shipments with disciplined documentation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose Us (3 + 2 Balanced Composition) -->
+<section class="section section-white">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Core Strengths</span>
+      <h2 class="section-title">Why Choose Us</h2>
+      <p class="section-subtitle">
+        The principles guiding our agricultural sourcing and export operations.
+      </p>
+    </div>
+
+    <div class="why-choose-grid-balanced">
+      <!-- Top Row: 3 Cards -->
+      <div class="why-choose-row-3">
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">01</div>
+          <p class="why-choose-text-bold">India-based sourcing with a focus on quality.</p>
+        </div>
+
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">02</div>
+          <p class="why-choose-text-bold">Reliable supplier relationships.</p>
+        </div>
+
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">03</div>
+          <p class="why-choose-text-bold">Buyer-focused product sourcing.</p>
+        </div>
+      </div>
+
+      <!-- Bottom Row: 2 Cards (Centered) -->
+      <div class="why-choose-row-2">
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">04</div>
+          <p class="why-choose-text-bold">Transparent communication and documentation.</p>
+        </div>
+
+        <div class="why-choose-card-premium">
+          <div class="why-choose-num-accent">05</div>
+          <p class="why-choose-text-bold">Long-term international business relationships.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Leadership (Partners) -->
+<section class="section section-soft" id="leadership">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Leadership</span>
+      <h2 class="section-title">Partners</h2>
+      <p class="section-subtitle">
+        Kailash Global Impex is guided by its Partners.
+      </p>
+    </div>
+
+    <div class="leadership-grid">
+      <!-- Henil Patel -->
+      <div class="leader-card">
+        <div class="leader-image-box">
+          <picture>
+            <source srcset="{% static 'images/founders/henil-patel.webp' %}" type="image/webp">
+            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" loading="lazy">
+          </picture>
+        </div>
+        <div class="leader-info">
+          <h3 class="leader-name">Henil Patel</h3>
+          <span class="leader-role">Partner</span>
+        </div>
+      </div>
+
+      <!-- Nihar Patel -->
+      <div class="leader-card">
+        <div class="leader-image-box">
+          <picture>
+            <source srcset="{% static 'images/founders/nihar-patel.webp' %}" type="image/webp">
+            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" loading="lazy">
+          </picture>
+        </div>
+        <div class="leader-info">
+          <h3 class="leader-name">Nihar Patel</h3>
+          <span class="leader-role">Partner</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Bar -->
+<section class="section section-white" style="text-align: center; border-top: 1px solid var(--border-subtle);">
+  <div class="container container-narrow">
+    <h2 style="font-size: 2rem; color: var(--color-forest-dark); margin-bottom: 1rem;">Connect with Kailash Global Impex</h2>
+    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 2rem;">
+      Discuss your commodity requirements with our trade team in Visnagar, Gujarat.
+    </p>
+    <a href="{% url 'core:contact' %}" class="btn btn-primary btn-lg">Contact Trade Desk &rarr;</a>
+  </div>
+</section>
+
+{% endblock %}

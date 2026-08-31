@@ -1,0 +1,94 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Products Catalog CMS | Kailash CRM{% endblock %}
+{% block topbar_title %}Export Products CMS{% endblock %}
+
+{% block content %}
+
+<div class="admin-table-card">
+  <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h3 style="font-family:'Outfit', sans-serif; font-size:1.15rem; color:#09261e; font-weight:700;">
+        Export Commodities Catalog ({{ products.count }})
+      </h3>
+      <p style="font-size:0.85rem; color:#62756c; margin-top:0.2rem;">
+        Add, edit, or toggle public status for export products.
+      </p>
+    </div>
+    <a href="{% url 'admin_panel:product_add' %}" class="admin-btn admin-btn-gold" style="font-size:0.85rem;">
+      + Add New Product
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Product Name</th>
+          <th>Botanical Name</th>
+          <th>Origin</th>
+          <th>Status</th>
+          <th>Order</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td style="width: 70px;">
+            {% if p.slug == 'raw-tobacco-leaf' and not p.image %}
+              <img src="{% static 'images/products/tobacco.png' %}" alt="{{ p.name }}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #d1dbd5;">
+            {% elif p.slug == 'moringa-leaf-powder' and not p.image %}
+              <img src="{% static 'images/products/moringa.png' %}" alt="{{ p.name }}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #d1dbd5;">
+            {% elif p.image %}
+              <img src="{{ p.image.url }}" alt="{{ p.name }}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #d1dbd5;">
+            {% else %}
+              <div style="width:48px; height:48px; background:#edf2ee; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🌿</div>
+            {% endif %}
+          </td>
+          <td>
+            <div style="font-weight:700; color:#09261e;">{{ p.name }}</div>
+            <div style="font-size:0.8rem; color:#62756c;">{{ p.tagline|default:p.slug }}</div>
+          </td>
+          <td style="font-style:italic; font-size:0.85rem;">{{ p.botanical_name|default:"—" }}</td>
+          <td>{{ p.origin }}</td>
+          <td>
+            {% if p.is_active %}
+              <span class="badge badge-CONTACTED">Active (Public)</span>
+            {% else %}
+              <span class="badge badge-CLOSED">Inactive (Hidden)</span>
+            {% endif %}
+          </td>
+          <td>{{ p.display_order }}</td>
+          <td>
+            <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:nowrap;">
+              <a href="{% url 'admin_panel:product_edit' pk=p.pk %}" class="admin-btn admin-btn-primary" style="padding:0.35rem 0.65rem; font-size:0.78rem;">
+                Edit
+              </a>
+              <a href="{% url 'admin_panel:product_toggle' pk=p.pk %}" class="admin-btn admin-btn-outline" style="padding:0.35rem 0.65rem; font-size:0.78rem;" title="Toggle public status">
+                {% if p.is_active %}Hide{% else %}Show{% endif %}
+              </a>
+              <a href="{% url 'core:product_detail' slug=p.slug %}" target="_blank" class="admin-btn admin-btn-outline" style="padding:0.35rem 0.65rem; font-size:0.78rem;" title="View on website">
+                &#8599;
+              </a>
+              <a href="{% url 'admin_panel:product_delete' pk=p.pk %}" class="admin-btn" style="padding:0.35rem 0.65rem; font-size:0.78rem; color:#dc2626; border-color:rgba(220,38,38,0.3); background:transparent;" title="Delete product">
+                ✕
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; padding: 3rem 1rem; color:#62756c;">
+            No products currently in catalog. Click "+ Add New Product" to create one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

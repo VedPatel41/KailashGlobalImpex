@@ -1,0 +1,144 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Inquiry #{{ inquiry.id }} — {{ inquiry.name }} | Kailash Global Impex CRM{% endblock %}
+{% block topbar_title %}Inquiry #{{ inquiry.id }}: {{ inquiry.name }}{% endblock %}
+
+{% block content %}
+
+<div style="margin-bottom: 1.5rem;">
+  <a href="{% url 'admin_panel:inquiries_list' %}" style="font-size:0.88rem; color:#62756c; text-decoration:none;">
+    &larr; Back to Inquiries List
+  </a>
+</div>
+
+<div class="detail-grid">
+  
+  <!-- Left Column: Lead & Trade Requirements -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <!-- Lead Overview Card -->
+    <div class="detail-card">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem;">
+        <div>
+          <h2 style="font-family:'Outfit', sans-serif; font-size:1.6rem; color:#09261e; font-weight:700;">
+            {{ inquiry.name }}
+          </h2>
+          <div style="font-size:0.95rem; color:#62756c; margin-top:0.2rem;">
+            {{ inquiry.company_name|default:"Individual / Direct Trade Buyer" }}
+          </div>
+        </div>
+        <span class="badge badge-{{ inquiry.status }}" style="font-size:0.85rem; padding:0.4rem 1rem;">
+          {{ inquiry.get_status_display }}
+        </span>
+      </div>
+
+      <div class="info-list">
+        <div class="info-label">Email Address:</div>
+        <div class="info-val">
+          <a href="mailto:{{ inquiry.email }}" style="color:#09261e; font-weight:600; text-decoration:underline;">
+            {{ inquiry.email }}
+          </a>
+        </div>
+
+        <div class="info-label">Mobile Number:</div>
+        <div class="info-val">
+          <a href="tel:{{ inquiry.mobile_number }}" style="color:#09261e; font-weight:600;">
+            {{ inquiry.mobile_number }}
+          </a>
+        </div>
+
+        <div class="info-label">Destination Country:</div>
+        <div class="info-val"><strong>{{ inquiry.country }}</strong></div>
+
+        <div class="info-label">Date Received:</div>
+        <div class="info-val">{{ inquiry.created_at|date:"F d, Y \a\t H:i" }}</div>
+
+        {% if inquiry.ip_address %}
+        <div class="info-label">Client IP Address:</div>
+        <div class="info-val" style="color:#62756c; font-family:monospace;">{{ inquiry.ip_address }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Commodity Requirements Card -->
+    <div class="detail-card">
+      <h3 class="detail-section-title">Commodity Requirements & Specifications</h3>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:#62756c; font-weight:700; margin-bottom:0.35rem;">
+          Product of Interest
+        </div>
+        <div style="font-size:1.2rem; font-weight:700; color:#09261e;">
+          {{ inquiry.product }}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:#62756c; font-weight:700; margin-bottom:0.35rem;">
+          Volume, Grade & Custom Specifications
+        </div>
+        <div style="background:#f8faf9; border:1px solid var(--admin-border); border-radius:8px; padding:1.25rem; font-size:0.95rem; line-height:1.6; color:#16201c; white-space:pre-wrap;">
+          {{ inquiry.product_details|default:"No specific parameters submitted." }}
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:#62756c; font-weight:700; margin-bottom:0.35rem;">
+          Additional Remarks & Shipping Schedule
+        </div>
+        <div style="background:#f8faf9; border:1px solid var(--admin-border); border-radius:8px; padding:1.25rem; font-size:0.95rem; line-height:1.6; color:#16201c; white-space:pre-wrap;">
+          {{ inquiry.remarks|default:"None." }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: CRM Actions & Notes -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <!-- Status & Notes Updater -->
+    <div class="detail-card">
+      <h3 class="detail-section-title">Trade Processing & Notes</h3>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="display:block; margin-bottom:0.4rem; font-size:0.85rem; font-weight:600;">
+            Workflow Status:
+          </label>
+          {{ form.status }}
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label class="form-label" style="display:block; margin-bottom:0.4rem; font-size:0.85rem; font-weight:600;">
+            Internal Trade Notes:
+          </label>
+          {{ form.admin_notes }}
+          <div style="font-size:0.75rem; color:#62756c; margin-top:0.3rem;">
+            Record quotation history, sample dispatch tracking, or buyer dialogue here.
+          </div>
+        </div>
+
+        <button type="submit" class="crm-btn crm-btn-primary" style="width:100%; justify-content:center;">
+          Save Updates &rarr;
+        </button>
+      </form>
+    </div>
+
+    <!-- Quick Follow-up Actions -->
+    <div class="detail-card">
+      <h3 class="detail-section-title">Quick Lead Actions</h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <a href="mailto:{{ inquiry.email }}?subject=Kailash%20Global%20Impex%20-%20Commercial%20Inquiry%20%23{{ inquiry.id }}%20({{ inquiry.product }})" class="crm-btn crm-btn-outline" style="justify-content:center;">
+          ✉ Email {{ inquiry.name }}
+        </a>
+        <a href="tel:{{ inquiry.mobile_number }}" class="crm-btn crm-btn-outline" style="justify-content:center;">
+          📞 Direct Phone Call
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
