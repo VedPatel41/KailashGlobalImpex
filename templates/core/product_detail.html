@@ -4,26 +4,25 @@
 {% block title %}{{ page_title|default:product.name }}{% endblock %}
 
 {% block extra_head %}
-<!-- Structured Data: Product, BreadcrumbList & FAQPage JSON-LD -->
+<!-- Structured Data: ItemPage & BreadcrumbList JSON-LD (B2B Commodity Specification) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Product",
-      "@id": "{{ canonical_url }}#product",
-      "name": "{{ product.name|escapejs }}",
+      "@type": "ItemPage",
+      "@id": "{{ canonical_url }}#itempage",
+      "url": "{{ canonical_url }}",
+      "name": "{{ product.name|escapejs }} Export from India | Kailash Global Impex",
       "description": "{{ meta_description|escapejs }}",
       "image": "{{ CANONICAL_DOMAIN }}{% if product.slug == 'raw-tobacco-leaf' %}{% static 'images/products/tobacco.png' %}{% elif product.slug == 'moringa-leaf-powder' %}{% static 'images/products/moringa.png' %}{% elif product.image %}{{ product.image.url }}{% endif %}",
-      "brand": {
-        "@type": "Brand",
-        "name": "Kailash Global Impex"
+      "isPartOf": {
+        "@id": "{{ CANONICAL_DOMAIN }}/#website"
       },
-      "category": "Agricultural Commodities",
-      "countryOfOrigin": {
-        "@type": "Country",
-        "name": "India"
-      }
+      "about": {
+        "@id": "{{ CANONICAL_DOMAIN }}/#organization"
+      },
+      "inLanguage": "en-US"
     },
     {
       "@type": "BreadcrumbList",
@@ -46,36 +45,6 @@
           "position": 3,
           "name": "{{ product.name|escapejs }}",
           "item": "{{ canonical_url }}"
-        }
-      ]
-    },
-    {
-      "@type": "FAQPage",
-      "@id": "{{ canonical_url }}#faq",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How is {{ product.name|escapejs }} sourced?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Kailash Global Impex procures {{ product.name|escapejs }} directly from established Indian agricultural origins, aligning grading and quality parameters with buyer commercial agreements."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What export packaging options are available for {{ product.name|escapejs }}?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Commodities are packed in seaworthy, export-grade packaging suitable for containerized international transit, customized based on destination regulatory requirements and buyer purchase orders."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How can commercial buyers request pricing and availability?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "International buyers can submit their required volume, delivery timeline, and destination port via our trade inquiry form or connect directly with our trade desk on WhatsApp or Email for a formal commercial quote."
-          }
         }
       ]
     }

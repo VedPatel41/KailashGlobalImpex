@@ -402,7 +402,8 @@ class SEOTechnicalTestCase(TestCase):
         for slug in ['raw-tobacco-leaf', 'moringa-leaf-powder']:
             response = self.client.get(f'/products/{slug}/', HTTP_HOST='vedop.fun')
             content = response.content.decode('utf-8')
-            self.assertIn('"@type": "Product"', content)
+            self.assertIn('"@type": "ItemPage"', content)
+            self.assertNotIn('"@type": "Product"', content)
             self.assertIn('"@type": "BreadcrumbList"', content)
             self.assertIn(f'https://vedop.fun/products/{slug}/', content)
             self.assertIn('Frequently Asked Questions', content)
