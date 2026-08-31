@@ -99,3 +99,66 @@ class CoreViewsTestCase(TestCase):
         self.assertNotContains(response, '<form action="/submit-inquiry/"')
         self.assertContains(response, 'Inquire Now')
         self.assertContains(response, '/contact/?product=raw-tobacco-leaf')
+
+
+class DomainConfigurationTestCase(TestCase):
+    """
+    Validates that the new production domains (vedop.fun, www.vedop.fun)
+    and existing Render domain (kailashglobalimpex.onrender.com) are properly accepted.
+    """
+
+    def test_production_hosts_accepted(self):
+        hosts = [
+            'vedop.fun',
+            'www.vedop.fun',
+            'kailashglobalimpex.onrender.com',
+            'kailashglobalimpex.com',
+            'www.kailashglobalimpex.com',
+            'localhost',
+            '127.0.0.1',
+        ]
+        for host in hosts:
+            response = self.client.get('/', HTTP_HOST=host)
+            self.assertEqual(response.status_code, 200, f"Host '{host}' was rejected with status {response.status_code}")
+
+    def test_csrf_trusted_origins_configuration(self):
+        from django.conf import settings
+        required_origins = [
+            'https://vedop.fun',
+            'https://www.vedop.fun',
+            'https://kailashglobalimpex.onrender.com',
+        ]
+        for origin in required_origins:
+            self.assertIn(origin, settings.CSRF_TRUSTED_ORIGINS, f"Origin '{origin}' is missing from CSRF_TRUSTED_ORIGINS")
+
+    def test_dynamic_site_domain_context_processor(self):
+        response = self.client.get('/', HTTP_HOST='vedop.fun', secure=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'https://vedop.fun')
+
+    def test_post_with_csrf_on_custom_domain(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        payload = {
+            'name': 'Ved Patel',
+            'email': 'ved@example.com',
+            'company_name': 'Global Trading',
+            'mobile_number': '+91 9999999999',
+            'country': 'India',
+            'product': 'Raw Tobacco Leaf',
+            'product_details': 'Testing inquiry on custom domain.',
+            'remarks': 'Testing',
+            'website_url': '',
+        }
+        get_resp = csrf_client.get(reverse('core:contact'), HTTP_HOST='vedop.fun', secure=True)
+        csrf_token = get_resp.cookies['csrftoken'].value
+        response = csrf_client.post(
+            reverse('core:submit_inquiry'),
+            data=payload,
+            HTTP_HOST='vedop.fun',
+            HTTP_ORIGIN='https://vedop.fun',
+            HTTP_X_CSRFTOKEN=csrf_token,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            secure=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json().get('success'))

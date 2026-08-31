@@ -25,27 +25,53 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = [
+# Allowed Hosts configuration
+# Production domains, Render URL, and localhost for development
+DEFAULT_ALLOWED_HOSTS = [
+    'vedop.fun',
+    'www.vedop.fun',
+    'kailashglobalimpex.onrender.com',
+    'kailashglobalimpex.com',
+    'www.kailashglobalimpex.com',
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+]
+
+env_allowed_hosts = [
     host.strip()
-    for host in os.environ.get(
-        'DJANGO_ALLOWED_HOSTS',
-        'localhost,127.0.0.1,kailashglobalimpex.com,www.kailashglobalimpex.com'
-    ).split(',')
+    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
     if host.strip()
 ]
+
+# Merge environment hosts and defaults without duplicates
+ALLOWED_HOSTS = list(dict.fromkeys(env_allowed_hosts + DEFAULT_ALLOWED_HOSTS))
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-CSRF_TRUSTED_ORIGINS = [
+# CSRF Trusted Origins configuration for HTTPS requests & forms
+DEFAULT_CSRF_TRUSTED_ORIGINS = [
+    'https://vedop.fun',
+    'https://www.vedop.fun',
+    'https://kailashglobalimpex.onrender.com',
+    'https://kailashglobalimpex.com',
+    'https://www.kailashglobalimpex.com',
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+env_csrf_origins = [
     origin.strip()
-    for origin in os.environ.get(
-        'CSRF_TRUSTED_ORIGINS',
-        'http://127.0.0.1,http://localhost,https://kailashglobalimpex.com,https://www.kailashglobalimpex.com'
-    ).split(',')
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
     if origin.strip()
 ]
+
+# Merge environment origins and defaults without duplicates
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(env_csrf_origins + DEFAULT_CSRF_TRUSTED_ORIGINS))
 
 if RENDER_EXTERNAL_HOSTNAME:
     render_origin = f"https://{RENDER_EXTERNAL_HOSTNAME}"
@@ -198,8 +224,9 @@ DEFAULT_FROM_EMAIL = f"Kailash Global Impex <{EMAIL_HOST_USER}>"
 COMPANY_NOTIFICATION_EMAIL = os.environ.get('COMPANY_NOTIFICATION_EMAIL', 'kailashglobalimpex@gmail.com')
 
 
-# Reverse proxy SSL header (Essential for Render / Reverse Proxies / Load Balancers)
+# Reverse proxy SSL header and host forwarding (Essential for Render / Reverse Proxies / Load Balancers)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 # Production Security Enhancements (Active when DEBUG=False)
 if not DEBUG:

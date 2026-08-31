@@ -91,3 +91,30 @@ class AdminPanelTestCase(TestCase):
         self.assertEqual(toggle_res.status_code, 302)
         p.refresh_from_db()
         self.assertFalse(p.is_active)
+
+    def test_admin_on_custom_domain(self):
+        # Test custom admin login page on vedop.fun
+        res = self.client.get(reverse('admin_panel:login'), HTTP_HOST='vedop.fun', secure=True)
+        self.assertEqual(res.status_code, 200)
+
+        # Test Django built-in admin login page on vedop.fun
+        django_admin_res = self.client.get('/admin/login/', HTTP_HOST='vedop.fun', secure=True)
+        self.assertEqual(django_admin_res.status_code, 200)
+
+        # Test login POST on vedop.fun with CSRF enforcement
+        csrf_client = Client(enforce_csrf_checks=True)
+        get_res = csrf_client.get(reverse('admin_panel:login'), HTTP_HOST='vedop.fun', secure=True)
+        csrf_token = get_res.cookies['csrftoken'].value
+        login_res = csrf_client.post(
+            reverse('admin_panel:login'),
+            data={
+                'username': 'admin_tester',
+                'password': 'TestPassword123!',
+                'csrfmiddlewaretoken': csrf_token,
+            },
+            HTTP_HOST='vedop.fun',
+            HTTP_ORIGIN='https://vedop.fun',
+            secure=True
+        )
+        self.assertEqual(login_res.status_code, 302)
+        self.assertIn('/admin-panel/', login_res.url)
