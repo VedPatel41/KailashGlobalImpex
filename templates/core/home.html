@@ -130,15 +130,15 @@
           {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" width="600" height="400" loading="lazy">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="600" height="400" loading="lazy">
             </picture>
           {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" width="600" height="400" loading="lazy">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="600" height="400" loading="lazy">
             </picture>
           {% elif product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" width="600" height="400" loading="lazy">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="600" height="400" loading="lazy">
           {% endif %}
           <div class="product-badge">Origin: {{ product.origin }}</div>
         </div>
@@ -253,7 +253,7 @@
         <div class="leader-image-box">
           <picture>
             <source srcset="{% static 'images/founders/henil-patel.webp' %}" type="image/webp">
-            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" width="200" height="200" loading="lazy">
+            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel, Partner" width="200" height="200" loading="lazy">
           </picture>
         </div>
         <div class="leader-info">
@@ -267,7 +267,7 @@
         <div class="leader-image-box">
           <picture>
             <source srcset="{% static 'images/founders/nihar-patel.webp' %}" type="image/webp">
-            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" width="200" height="200" loading="lazy">
+            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel, Partner" width="200" height="200" loading="lazy">
           </picture>
         </div>
         <div class="leader-info">

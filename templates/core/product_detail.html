@@ -4,7 +4,7 @@
 {% block title %}{{ page_title|default:product.name }}{% endblock %}
 
 {% block extra_head %}
-<!-- Structured Data: Product & BreadcrumbList JSON-LD -->
+<!-- Structured Data: Product, BreadcrumbList & FAQPage JSON-LD -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -23,21 +23,6 @@
       "countryOfOrigin": {
         "@type": "Country",
         "name": "India"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": "{{ canonical_url }}",
-        "priceCurrency": "USD",
-        "price": "0",
-        "priceSpecification": {
-          "@type": "PriceSpecification",
-          "priceCurrency": "USD",
-          "description": "Commercial wholesale quote provided per buyer order specifications and FOB/CIF terms."
-        },
-        "availability": "https://schema.org/InStock",
-        "seller": {
-          "@id": "{{ CANONICAL_DOMAIN }}/#organization"
-        }
       }
     },
     {
@@ -61,6 +46,36 @@
           "position": 3,
           "name": "{{ product.name|escapejs }}",
           "item": "{{ canonical_url }}"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "{{ canonical_url }}#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is {{ product.name|escapejs }} sourced?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Kailash Global Impex procures {{ product.name|escapejs }} directly from established Indian agricultural origins, aligning grading and quality parameters with buyer commercial agreements."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What export packaging options are available for {{ product.name|escapejs }}?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Commodities are packed in seaworthy, export-grade packaging suitable for containerized international transit, customized based on destination regulatory requirements and buyer purchase orders."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can commercial buyers request pricing and availability?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "International buyers can submit their required volume, delivery timeline, and destination port via our trade inquiry form or connect directly with our trade desk on WhatsApp or Email for a formal commercial quote."
+          }
         }
       ]
     }
@@ -106,15 +121,15 @@
         {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
           <picture>
             <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-            <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export from India - Kailash Global Impex" width="600" height="400">
+            <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves" width="600" height="400">
           </picture>
         {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
           <picture>
             <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-            <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export from India - Kailash Global Impex" width="600" height="400">
+            <img src="{% static 'images/products/moringa.png' %}" alt="Finely ground pure moringa leaf powder" width="600" height="400">
           </picture>
         {% elif product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }} Export from India - Kailash Global Impex" width="600" height="400">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="600" height="400">
         {% endif %}
       </div>
     </div>
@@ -296,15 +311,15 @@
           {% if item.slug == 'raw-tobacco-leaf' and not item.image %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export from India - Kailash Global Impex" width="500" height="350" loading="lazy">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw tobacco leaves in storage" width="500" height="350" loading="lazy">
             </picture>
           {% elif item.slug == 'moringa-leaf-powder' and not item.image %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export from India - Kailash Global Impex" width="500" height="350" loading="lazy">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa leaf powder" width="500" height="350" loading="lazy">
             </picture>
           {% elif item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.name }} Export from India - Kailash Global Impex" width="500" height="350" loading="lazy">
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" width="500" height="350" loading="lazy">
           {% endif %}
           <div class="product-badge">Origin: {{ item.origin }}</div>
         </div>
