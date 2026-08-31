@@ -162,3 +162,112 @@ class DomainConfigurationTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json().get('success'))
+
+
+import xml.etree.ElementTree as ET
+
+
+class SitemapAndRobotsTestCase(TestCase):
+    """
+    Tests ensuring sitemap.xml and robots.txt strictly satisfy
+    Googlebot and Google Search Console requirements.
+    """
+
+    def setUp(self):
+        self.client = Client()
+        self.tobacco = Product.objects.create(
+            name="Raw Tobacco Leaf",
+            slug="raw-tobacco-leaf",
+            origin="India",
+            short_description="Export-grade raw tobacco leaves.",
+            overview="Detailed tobacco overview.",
+            is_active=True,
+            display_order=1
+        )
+        self.moringa = Product.objects.create(
+            name="Moringa Leaf Powder",
+            slug="moringa-leaf-powder",
+            botanical_name="Moringa oleifera",
+            origin="India",
+            short_description="Pure moringa leaf powder.",
+            overview="Detailed moringa overview.",
+            is_active=True,
+            display_order=2
+        )
+        # Create an inactive product to test exclusion
+        self.inactive_product = Product.objects.create(
+            name="Inactive Test Product",
+            slug="inactive-test-product",
+            origin="India",
+            short_description="Hidden product.",
+            overview="Hidden overview.",
+            is_active=False,
+            display_order=99
+        )
+
+    def test_sitemap_get_success_and_headers(self):
+        response = self.client.get('/sitemap.xml', HTTP_HOST='vedop.fun')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('application/xml', response['Content-Type'])
+
+    def test_sitemap_head_request(self):
+        response = self.client.head('/sitemap.xml', HTTP_HOST='vedop.fun')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('application/xml', response['Content-Type'])
+
+    def test_sitemap_googlebot_user_agent(self):
+        response = self.client.get(
+            '/sitemap.xml',
+            HTTP_HOST='vedop.fun',
+            HTTP_USER_AGENT='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_sitemap_xml_validity_and_urls(self):
+        response = self.client.get('/sitemap.xml', HTTP_HOST='vedop.fun')
+        self.assertEqual(response.status_code, 200)
+
+        # Parse XML to guarantee strict conformance
+        root = ET.fromstring(response.content)
+        ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+        loc_elements = root.findall('.//sm:loc', ns)
+        locs = [el.text for el in loc_elements]
+
+        # 8 expected canonical public URLs
+        expected_urls = [
+            'https://vedop.fun/',
+            'https://vedop.fun/about/',
+            'https://vedop.fun/products/',
+            'https://vedop.fun/our-approach/',
+            'https://vedop.fun/certificates/',
+            'https://vedop.fun/contact/',
+            'https://vedop.fun/products/raw-tobacco-leaf/',
+            'https://vedop.fun/products/moringa-leaf-powder/',
+        ]
+
+        self.assertEqual(len(locs), 8)
+        for expected in expected_urls:
+            self.assertIn(expected, locs, f"Missing URL in sitemap: {expected}")
+
+        # Inactive product must NOT be in sitemap
+        self.assertNotIn('https://vedop.fun/products/inactive-test-product/', locs)
+
+        # Private / admin / inquiry POST URLs must NOT be in sitemap
+        for private in ['/admin/', '/admin-panel/', '/submit-inquiry/']:
+            self.assertFalse(any(private in loc for loc in locs), f"Private URL found in sitemap: {private}")
+
+    def test_robots_txt_content_and_sitemap_reference(self):
+        response = self.client.get('/robots.txt', HTTP_HOST='vedop.fun')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('text/plain', response['Content-Type'])
+        content = response.content.decode('utf-8')
+        self.assertIn('User-agent: *', content)
+        self.assertIn('Allow: /', content)
+        self.assertIn('Disallow: /admin/', content)
+        self.assertIn('Disallow: /admin-panel/', content)
+        self.assertIn('Sitemap: https://vedop.fun/sitemap.xml', content)
+
+    def test_robots_txt_head_request(self):
+        response = self.client.head('/robots.txt', HTTP_HOST='vedop.fun')
+        self.assertEqual(response.status_code, 200)
+

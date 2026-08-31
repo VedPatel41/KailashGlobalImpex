@@ -7,8 +7,10 @@ from django.conf import settings
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.sitemaps.views import sitemap as django_sitemap_view
 from .models import Product, Inquiry, Certificate
 from .forms import InquiryForm
+from .sitemaps import sitemaps
 
 logger = logging.getLogger(__name__)
 
@@ -199,64 +201,25 @@ def submit_inquiry(request):
 
 
 def robots_txt(request):
-    """Dynamic robots.txt view."""
-    domain = request.build_absolute_uri('/')[:-1]
+    """Dynamic robots.txt view ensuring Googlebot compatibility and correct sitemap reference."""
+    host = request.get_host()
+    scheme = 'https' if not settings.DEBUG else request.scheme
     content = f"""User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /admin-panel/
 
-Sitemap: {domain}/sitemap.xml
+Sitemap: {scheme}://{host}/sitemap.xml
 """
-    return HttpResponse(content, content_type="text/plain")
+    return HttpResponse(content, content_type="text/plain; charset=utf-8")
 
 
 def sitemap_xml(request):
-    """Dynamic XML sitemap view."""
-    domain = request.build_absolute_uri('/')[:-1]
-    now = timezone.now().strftime('%Y-%m-%d')
-    
-    static_urls = [
-        {'loc': f"{domain}/", 'priority': '1.0', 'changefreq': 'weekly'},
-        {'loc': f"{domain}/about/", 'priority': '0.8', 'changefreq': 'monthly'},
-        {'loc': f"{domain}/products/", 'priority': '0.9', 'changefreq': 'weekly'},
-        {'loc': f"{domain}/our-approach/", 'priority': '0.8', 'changefreq': 'monthly'},
-        {'loc': f"{domain}/certificates/", 'priority': '0.7', 'changefreq': 'monthly'},
-        {'loc': f"{domain}/contact/", 'priority': '0.8', 'changefreq': 'monthly'},
-    ]
-    
-    product_urls = []
-    for p in Product.objects.filter(is_active=True):
-        product_urls.append({
-            'loc': f"{domain}/products/{p.slug}/",
-            'priority': '0.9',
-            'changefreq': 'weekly',
-            'lastmod': p.updated_at.strftime('%Y-%m-%d')
-        })
-
-    xml_entries = []
-    for item in static_urls:
-        xml_entries.append(f"""  <url>
-    <loc>{item['loc']}</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>{item['changefreq']}</changefreq>
-    <priority>{item['priority']}</priority>
-  </url>""")
-
-    for item in product_urls:
-        xml_entries.append(f"""  <url>
-    <loc>{item['loc']}</loc>
-    <lastmod>{item['lastmod']}</lastmod>
-    <changefreq>{item['changefreq']}</changefreq>
-    <priority>{item['priority']}</priority>
-  </url>""")
-
-    xml_body = "\n".join(xml_entries)
-    full_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{xml_body}
-</urlset>"""
-    return HttpResponse(full_xml, content_type="application/xml")
+    """
+    Standard XML sitemap view powered by django.contrib.sitemaps.
+    Returns compliant XML sitemap for search engine crawlers.
+    """
+    return django_sitemap_view(request, sitemaps=sitemaps)
 
 
 def custom_404(request, exception=None):
