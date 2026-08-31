@@ -1,7 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}About Us | Kailash Global Impex{% endblock %}
+{% block title %}{{ page_title|default:"About Us | Kailash Global Impex — Agricultural Exporter Gujarat India" }}{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data: AboutPage JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "{{ CANONICAL_DOMAIN }}/about/#webpage",
+  "url": "{{ CANONICAL_DOMAIN }}/about/",
+  "name": "About Kailash Global Impex",
+  "description": "Learn about Kailash Global Impex, our Indian agricultural sourcing foundations in Visnagar, Gujarat, and leadership partners Henil Patel and Nihar Patel.",
+  "isPartOf": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#website"
+  },
+  "about": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#organization"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ CANONICAL_DOMAIN }}/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About Us",
+        "item": "{{ CANONICAL_DOMAIN }}/about/"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 
@@ -148,7 +185,7 @@
         <div class="leader-image-box">
           <picture>
             <source srcset="{% static 'images/founders/henil-patel.webp' %}" type="image/webp">
-            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" loading="lazy">
+            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" width="200" height="200" loading="lazy">
           </picture>
         </div>
         <div class="leader-info">
@@ -162,7 +199,7 @@
         <div class="leader-image-box">
           <picture>
             <source srcset="{% static 'images/founders/nihar-patel.webp' %}" type="image/webp">
-            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" loading="lazy">
+            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" width="200" height="200" loading="lazy">
           </picture>
         </div>
         <div class="leader-info">

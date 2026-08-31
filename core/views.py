@@ -26,25 +26,23 @@ def get_client_ip(request):
 
 
 def home(request):
-    """Homepage with hero, intro, authentic products, approach, trade visual, and inquiry form."""
+    """Homepage with hero, authentic products, approach, trade visual, and inquiry CTA."""
     products = Product.objects.filter(is_active=True).order_by('display_order', 'name')
     form = InquiryForm()
     context = {
-        'page_title': 'Connecting Markets, Delivering Excellence | Kailash Global Impex',
-        'meta_description': 'Kailash Global Impex is an international B2B agricultural export company based in Gujarat, India, specializing in Raw Tobacco Leaf and Moringa Leaf Powder sourcing.',
+        'page_title': 'Kailash Global Impex | B2B Agricultural Export Enterprise India',
+        'meta_description': 'Kailash Global Impex is an international B2B agricultural export enterprise based in Visnagar, Gujarat, India. Sourcing and exporting Raw Tobacco Leaf and Moringa Leaf Powder.',
         'products': products,
         'form': form,
-        'canonical_url': request.build_absolute_uri(reverse('core:home')),
     }
     return render(request, 'core/home.html', context)
 
 
 def about(request):
-    """About page detailing corporate profile, vision, mission, and leadership (Partners)."""
+    """About page detailing corporate profile, vision, mission, and leadership partners."""
     context = {
-        'page_title': 'About Us | Kailash Global Impex — Authentic Indian Agricultural Sourcing',
-        'meta_description': 'Learn about Kailash Global Impex, our agricultural export foundations in Visnagar, Gujarat, and our leadership partners Henil Patel and Nihar Patel.',
-        'canonical_url': request.build_absolute_uri(reverse('core:about')),
+        'page_title': 'About Us | Kailash Global Impex — Agricultural Exporter Gujarat India',
+        'meta_description': 'Learn about Kailash Global Impex, our Indian agricultural sourcing foundations in Visnagar, Gujarat, and our leadership partners Henil Patel and Nihar Patel.',
     }
     return render(request, 'core/about.html', context)
 
@@ -53,10 +51,9 @@ def product_list(request):
     """Product catalog page."""
     products = Product.objects.filter(is_active=True).order_by('display_order', 'name')
     context = {
-        'page_title': 'Export Products | Kailash Global Impex',
-        'meta_description': 'Explore export-grade agricultural products from India: Premium Raw Tobacco Leaf and Pure Moringa Leaf Powder for global commercial buyers.',
+        'page_title': 'Agricultural Export Products | Kailash Global Impex',
+        'meta_description': 'Explore export-grade agricultural commodities from India by Kailash Global Impex: Premium Raw Tobacco Leaf and Pure Moringa Leaf Powder for commercial buyers.',
         'products': products,
-        'canonical_url': request.build_absolute_uri(reverse('core:product_list')),
     }
     return render(request, 'core/product_list.html', context)
 
@@ -66,12 +63,15 @@ def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
     other_products = Product.objects.filter(is_active=True).exclude(id=product.id)
     
+    meta_desc = product.short_description
+    if not meta_desc or len(meta_desc) < 30:
+        meta_desc = f'{product.name} ({product.botanical_name or "Agricultural Commodity"}) exported from India by Kailash Global Impex. Sourced to buyer specifications and commercial grading.'
+    
     context = {
         'product': product,
         'other_products': other_products,
-        'page_title': f'{product.name} | Sourcing & Export — Kailash Global Impex',
-        'meta_description': product.short_description or f'Authentic Indian {product.name} exported worldwide by Kailash Global Impex according to buyer specifications.',
-        'canonical_url': request.build_absolute_uri(reverse('core:product_detail', args=[product.slug])),
+        'page_title': f'{product.name} Export from India | Kailash Global Impex',
+        'meta_description': meta_desc,
     }
     return render(request, 'core/product_detail.html', context)
 
@@ -79,9 +79,8 @@ def product_detail(request, slug):
 def our_approach(request):
     """Our Approach page highlighting the 3-pillar philosophy: Source Right, Match Requirements, Deliver Reliably."""
     context = {
-        'page_title': 'Our Approach | Kailash Global Impex',
-        'meta_description': 'Source Right. Match Requirements. Deliver Reliably. Discover our disciplined B2B agricultural export methodology.',
-        'canonical_url': request.build_absolute_uri(reverse('core:our_approach')),
+        'page_title': 'Our Sourcing Approach | Kailash Global Impex',
+        'meta_description': 'Source Right. Match Requirements. Deliver Reliably. Discover the 3-pillar agricultural sourcing and export methodology of Kailash Global Impex.',
     }
     return render(request, 'core/our_approach.html', context)
 
@@ -90,11 +89,10 @@ def certificates(request):
     """Quality & Compliance page with intentional Coming Soon state or active certs."""
     active_certificates = Certificate.objects.filter(is_active=True).order_by('-created_at')
     context = {
-        'page_title': 'Certificates & Compliance | Kailash Global Impex',
-        'meta_description': 'Quality and compliance documentation for agricultural exports at Kailash Global Impex.',
+        'page_title': 'Quality Standards & Compliance | Kailash Global Impex',
+        'meta_description': 'Export quality standards, destination compliance documentation, and agricultural certification guidelines at Kailash Global Impex.',
         'certificates': active_certificates,
         'has_certificates': active_certificates.exists(),
-        'canonical_url': request.build_absolute_uri(reverse('core:certificates')),
     }
     return render(request, 'core/certificates.html', context)
 
@@ -104,7 +102,6 @@ def contact(request):
     product_param = request.GET.get('product', '').strip()
     initial_data = {}
     
-    # Map slug or query text to exact product choices
     slug_map = {
         'raw-tobacco-leaf': 'Raw Tobacco Leaf',
         'tobacco': 'Raw Tobacco Leaf',
@@ -120,11 +117,10 @@ def contact(request):
 
     form = InquiryForm(initial=initial_data)
     context = {
-        'page_title': 'Contact & Commercial Inquiries | Kailash Global Impex',
-        'meta_description': 'Get in touch with Kailash Global Impex in Visnagar, Gujarat, India for bulk trade inquiries, commercial pricing, and shipping schedules.',
+        'page_title': 'Contact Trade Desk | Kailash Global Impex Visnagar Gujarat',
+        'meta_description': 'Contact Kailash Global Impex in Visnagar, Gujarat, India. Submit commercial trade inquiries for bulk agricultural commodity exports.',
         'form': form,
         'selected_product': initial_data.get('product', ''),
-        'canonical_url': request.build_absolute_uri(reverse('core:contact')),
     }
     return render(request, 'core/contact.html', context)
 

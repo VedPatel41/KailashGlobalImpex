@@ -4,25 +4,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{{ page_title|default:"Kailash Global Impex | Connecting Markets, Delivering Excellence" }}{% endblock %}</title>
+  <title>{% block title %}{{ page_title|default:"Kailash Global Impex | B2B Agricultural Export Enterprise India" }}{% endblock %}</title>
   <meta name="description" content="{% block meta_desc %}{{ meta_description|default:'Kailash Global Impex is an international B2B agricultural export enterprise based in Visnagar, Gujarat, India, delivering export-grade Raw Tobacco Leaf and pure Moringa Leaf Powder worldwide.' }}{% endblock %}">
+  <meta name="robots" content="index, follow">
   
   <!-- Canonical URL -->
-  <link rel="canonical" href="{{ canonical_url|default:request.build_absolute_uri }}">
+  <link rel="canonical" href="{{ canonical_url }}">
 
   <!-- OpenGraph Metadata -->
   <meta property="og:site_name" content="Kailash Global Impex">
-  <meta property="og:title" content="{% block og_title %}{{ page_title|default:'Kailash Global Impex | Agricultural Export Enterprise' }}{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ page_title|default:'Kailash Global Impex | B2B Agricultural Export Enterprise India' }}{% endblock %}">
   <meta property="og:description" content="{% block og_desc %}{{ meta_description|default:'Connecting Markets, Delivering Excellence. Authentic Indian agricultural export products.' }}{% endblock %}">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="{{ canonical_url|default:request.build_absolute_uri }}">
-  <meta property="og:image" content="{{ SITE_DOMAIN }}{% static 'images/branding/logo.png' %}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:image" content="{{ CANONICAL_DOMAIN }}{% static 'images/branding/logo.png' %}">
+  <meta property="og:locale" content="en_US">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block tw_title %}{{ page_title|default:'Kailash Global Impex' }}{% endblock %}">
   <meta name="twitter:description" content="{% block tw_desc %}{{ meta_description|default:'Connecting Markets, Delivering Excellence' }}{% endblock %}">
-  <meta name="twitter:image" content="{{ SITE_DOMAIN }}{% static 'images/branding/logo.png' %}">
+  <meta name="twitter:image" content="{{ CANONICAL_DOMAIN }}{% static 'images/branding/logo.png' %}">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="{% static 'images/branding/logo.png' %}">
@@ -30,15 +32,24 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   
-  <!-- Structured Data JSON-LD -->
+  <!-- Structured Data: Organization JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": "{{ CANONICAL_DOMAIN }}/#organization",
     "name": "Kailash Global Impex",
-    "url": "{{ SITE_DOMAIN }}",
-    "logo": "{{ SITE_DOMAIN }}{% static 'images/branding/logo.png' %}",
-    "description": "Connecting Markets, Delivering Excellence. B2B agricultural export company based in Gujarat, India.",
+    "legalName": "Kailash Global Impex",
+    "url": "{{ CANONICAL_DOMAIN }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ CANONICAL_DOMAIN }}{% static 'images/branding/logo.png' %}",
+      "width": "512",
+      "height": "512"
+    },
+    "image": "{{ CANONICAL_DOMAIN }}{% static 'images/branding/logo.png' %}",
+    "description": "Kailash Global Impex is an international B2B agricultural export enterprise based in Visnagar, Gujarat, India, specializing in Raw Tobacco Leaf and Moringa Leaf Powder sourcing and worldwide commercial export.",
+    "slogan": "Connecting Markets, Delivering Excellence",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Visnagar",
@@ -63,8 +74,28 @@
         "availableLanguage": ["English", "Hindi", "Gujarati"]
       }
     ],
+    "founder": [
+      {
+        "@type": "Person",
+        "name": "Henil Patel",
+        "jobTitle": "Partner"
+      },
+      {
+        "@type": "Person",
+        "name": "Nihar Patel",
+        "jobTitle": "Partner"
+      }
+    ],
     "sameAs": [
       "https://www.instagram.com/kailashglobalimpex/"
+    ],
+    "knowsAbout": [
+      "Agricultural Export",
+      "Raw Tobacco Leaf",
+      "Moringa Leaf Powder",
+      "Bulk Commodity Sourcing",
+      "Indian Agricultural Trade",
+      "Gujarat Agricultural Sourcing"
     ]
   }
   </script>
@@ -78,8 +109,8 @@
   {% block intro_overlay %}
   <div id="intro-overlay" aria-hidden="true">
     <div class="intro-content">
-      <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Official Logo" class="intro-logo">
-      <h1 class="intro-title">Kailash Global Impex</h1>
+      <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Official Logo" class="intro-logo" width="80" height="80">
+      <div class="intro-title">Kailash Global Impex</div>
       <p class="intro-tagline">Connecting Markets, Delivering Excellence</p>
       <div class="intro-line"></div>
     </div>

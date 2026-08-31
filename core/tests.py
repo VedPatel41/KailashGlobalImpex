@@ -271,3 +271,143 @@ class SitemapAndRobotsTestCase(TestCase):
         response = self.client.head('/robots.txt', HTTP_HOST='vedop.fun')
         self.assertEqual(response.status_code, 200)
 
+
+import json
+import re
+
+
+class SEOTechnicalTestCase(TestCase):
+    """
+    Comprehensive SEO tests validating technical SEO, canonical URLs,
+    JSON-LD structured data, single H1 heading hierarchy, and meta tags.
+    """
+
+    def setUp(self):
+        self.client = Client()
+        self.tobacco = Product.objects.create(
+            name="Raw Tobacco Leaf",
+            slug="raw-tobacco-leaf",
+            origin="India",
+            short_description="Export-grade raw tobacco leaves sourced across India.",
+            overview="Detailed tobacco overview.",
+            is_active=True,
+            display_order=1
+        )
+        self.moringa = Product.objects.create(
+            name="Moringa Leaf Powder",
+            slug="moringa-leaf-powder",
+            botanical_name="Moringa oleifera",
+            origin="India",
+            short_description="Pure moringa leaf powder sourced from Gujarat, India.",
+            overview="Detailed moringa overview.",
+            is_active=True,
+            display_order=2
+        )
+
+        self.public_urls = [
+            ('/', 'https://vedop.fun/'),
+            ('/about/', 'https://vedop.fun/about/'),
+            ('/products/', 'https://vedop.fun/products/'),
+            ('/products/raw-tobacco-leaf/', 'https://vedop.fun/products/raw-tobacco-leaf/'),
+            ('/products/moringa-leaf-powder/', 'https://vedop.fun/products/moringa-leaf-powder/'),
+            ('/our-approach/', 'https://vedop.fun/our-approach/'),
+            ('/certificates/', 'https://vedop.fun/certificates/'),
+            ('/contact/', 'https://vedop.fun/contact/'),
+        ]
+
+    def test_canonical_urls_always_use_production_domain(self):
+        test_hosts = [
+            'vedop.fun',
+            'www.vedop.fun',
+            'kailashglobalimpex.onrender.com',
+            'localhost',
+        ]
+        for path, expected_canonical in self.public_urls:
+            for host in test_hosts:
+                response = self.client.get(path, HTTP_HOST=host)
+                self.assertEqual(response.status_code, 200, f"Failed GET {path} on {host}")
+                content = response.content.decode('utf-8')
+                expected_tag = f'<link rel="canonical" href="{expected_canonical}">'
+                self.assertIn(expected_tag, content, f"Missing or wrong canonical tag on {path} with host {host}")
+
+    def test_single_h1_per_page(self):
+        for path, _ in self.public_urls:
+            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            content = response.content.decode('utf-8')
+            h1_matches = re.findall(r'<h1\b[^>]*>(.*?)</h1>', content, re.IGNORECASE | re.DOTALL)
+            self.assertEqual(
+                len(h1_matches), 1,
+                f"Expected exactly 1 <h1> on {path}, found {len(h1_matches)}: {h1_matches}"
+            )
+
+    def test_meta_titles_and_descriptions_present_and_unique(self):
+        titles = set()
+        descriptions = set()
+
+        for path, _ in self.public_urls:
+            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            content = response.content.decode('utf-8')
+
+            # Extract title
+            title_match = re.search(r'<title>(.*?)</title>', content, re.IGNORECASE)
+            self.assertIsNotNone(title_match, f"Missing <title> on {path}")
+            title = title_match.group(1).strip()
+            self.assertTrue(len(title) > 15, f"Title too short on {path}: {title}")
+            self.assertIn("Kailash Global Impex", title, f"Branded name missing from title on {path}")
+            self.assertNotIn(title, titles, f"Duplicate title found on {path}: {title}")
+            titles.add(title)
+
+            # Extract description
+            desc_match = re.search(r'<meta name="description" content="([^"]+)"', content, re.IGNORECASE)
+            self.assertIsNotNone(desc_match, f"Missing <meta name='description'> on {path}")
+            desc = desc_match.group(1).strip()
+            self.assertTrue(len(desc) > 30, f"Meta description too short on {path}: {desc}")
+            descriptions.add(desc)
+
+    def test_json_ld_structured_data_validity(self):
+        for path, _ in self.public_urls:
+            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            content = response.content.decode('utf-8')
+
+            # Find all JSON-LD script blocks
+            json_ld_matches = re.findall(r'<script type="application/ld\+json">(.*?)</script>', content, re.DOTALL)
+            self.assertTrue(len(json_ld_matches) >= 1, f"No JSON-LD found on {path}")
+
+            for block in json_ld_matches:
+                try:
+                    data = json.loads(block.strip())
+                    self.assertIsInstance(data, dict, f"JSON-LD is not a dict on {path}")
+                    self.assertIn("@context", data, f"Missing @context in JSON-LD on {path}")
+                except Exception as exc:
+                    self.fail(f"Invalid JSON-LD on {path}: {exc}\nBlock:\n{block}")
+
+    def test_organization_schema_present_on_all_pages(self):
+        for path, _ in self.public_urls:
+            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            content = response.content.decode('utf-8')
+            self.assertIn('https://vedop.fun/#organization', content)
+            self.assertIn('Kailash Global Impex', content)
+            self.assertIn('Visnagar', content)
+            self.assertIn('Gujarat', content)
+            self.assertIn('384315', content)
+
+    def test_product_detail_schema_and_breadcrumbs(self):
+        for slug in ['raw-tobacco-leaf', 'moringa-leaf-powder']:
+            response = self.client.get(f'/products/{slug}/', HTTP_HOST='vedop.fun')
+            content = response.content.decode('utf-8')
+            self.assertIn('"@type": "Product"', content)
+            self.assertIn('"@type": "BreadcrumbList"', content)
+            self.assertIn(f'https://vedop.fun/products/{slug}/', content)
+            self.assertIn('Frequently Asked Questions', content)
+
+    def test_all_images_have_alt_attributes(self):
+        for path, _ in self.public_urls:
+            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            content = response.content.decode('utf-8')
+            img_tags = re.findall(r'<img\b[^>]*>', content, re.IGNORECASE)
+            for img in img_tags:
+                self.assertIn('alt="', img, f"Image missing alt attribute on {path}: {img}")
+                alt_val = re.search(r'alt="([^"]*)"', img).group(1)
+                self.assertTrue(len(alt_val.strip()) > 0, f"Empty alt attribute on {path}: {img}")
+
+

@@ -1,7 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Contact & Inquiries | Kailash Global Impex{% endblock %}
+{% block title %}{{ page_title|default:"Contact Trade Desk | Kailash Global Impex Visnagar Gujarat" }}{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data: ContactPage JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "@id": "{{ CANONICAL_DOMAIN }}/contact/#webpage",
+  "url": "{{ CANONICAL_DOMAIN }}/contact/",
+  "name": "Contact Trade Desk | Kailash Global Impex Visnagar Gujarat",
+  "description": "Contact Kailash Global Impex in Visnagar, Gujarat, India. Submit commercial trade inquiries for bulk agricultural commodity exports.",
+  "isPartOf": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#website"
+  },
+  "about": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#organization"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ CANONICAL_DOMAIN }}/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Contact",
+        "item": "{{ CANONICAL_DOMAIN }}/contact/"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 

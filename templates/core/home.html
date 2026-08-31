@@ -1,7 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Kailash Global Impex | Connecting Markets, Delivering Excellence{% endblock %}
+{% block title %}{{ page_title|default:"Kailash Global Impex | B2B Agricultural Export Enterprise India" }}{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data: WebSite JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "{{ CANONICAL_DOMAIN }}/#website",
+  "url": "{{ CANONICAL_DOMAIN }}/",
+  "name": "Kailash Global Impex",
+  "description": "B2B Indian Agricultural Export Enterprise - Connecting Markets, Delivering Excellence",
+  "publisher": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#organization"
+  },
+  "inLanguage": "en-US"
+}
+</script>
+{% endblock %}
 
 {% block content %}
 
@@ -112,15 +130,15 @@
           {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" loading="lazy">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" width="600" height="400" loading="lazy">
             </picture>
           {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" loading="lazy">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" width="600" height="400" loading="lazy">
             </picture>
           {% elif product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" loading="lazy">
+            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" width="600" height="400" loading="lazy">
           {% endif %}
           <div class="product-badge">Origin: {{ product.origin }}</div>
         </div>
@@ -235,7 +253,7 @@
         <div class="leader-image-box">
           <picture>
             <source srcset="{% static 'images/founders/henil-patel.webp' %}" type="image/webp">
-            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" loading="lazy">
+            <img src="{% static 'images/founders/henil-patel.png' %}" alt="Henil Patel - Partner, Kailash Global Impex" width="200" height="200" loading="lazy">
           </picture>
         </div>
         <div class="leader-info">
@@ -249,7 +267,7 @@
         <div class="leader-image-box">
           <picture>
             <source srcset="{% static 'images/founders/nihar-patel.webp' %}" type="image/webp">
-            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" loading="lazy">
+            <img src="{% static 'images/founders/nihar-patel.jpeg' %}" alt="Nihar Patel - Partner, Kailash Global Impex" width="200" height="200" loading="lazy">
           </picture>
         </div>
         <div class="leader-info">

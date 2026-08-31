@@ -1,16 +1,21 @@
 from django.utils import timezone
 from .models import Product
 
+CANONICAL_DOMAIN = 'https://vedop.fun'
+
 
 def company_context(request):
     """
     Global context processor supplying authentic corporate identity,
-    verified contact channels, and navigation items to all frontend templates.
+    verified contact channels, canonical SEO domains, and navigation items.
     """
     try:
         global_products = Product.objects.filter(is_active=True).order_by('display_order', 'name')
     except Exception:
         global_products = []
+
+    # Guaranteed canonical production URL pointing to https://vedop.fun
+    canonical_url = f"{CANONICAL_DOMAIN}{request.path}"
 
     return {
         'COMPANY_NAME': 'Kailash Global Impex',
@@ -44,4 +49,7 @@ def company_context(request):
         ],
         'CURRENT_YEAR': timezone.now().year,
         'SITE_DOMAIN': request.build_absolute_uri('/')[:-1],
+        'CANONICAL_DOMAIN': CANONICAL_DOMAIN,
+        'canonical_url': canonical_url,
     }
+

@@ -1,7 +1,73 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ product.name }} | Kailash Global Impex{% endblock %}
+{% block title %}{{ page_title|default:product.name }}{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data: Product & BreadcrumbList JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": "{{ canonical_url }}#product",
+      "name": "{{ product.name|escapejs }}",
+      "description": "{{ meta_description|escapejs }}",
+      "image": "{{ CANONICAL_DOMAIN }}{% if product.slug == 'raw-tobacco-leaf' %}{% static 'images/products/tobacco.png' %}{% elif product.slug == 'moringa-leaf-powder' %}{% static 'images/products/moringa.png' %}{% elif product.image %}{{ product.image.url }}{% endif %}",
+      "brand": {
+        "@type": "Brand",
+        "name": "Kailash Global Impex"
+      },
+      "category": "Agricultural Commodities",
+      "countryOfOrigin": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "{{ canonical_url }}",
+        "priceCurrency": "USD",
+        "price": "0",
+        "priceSpecification": {
+          "@type": "PriceSpecification",
+          "priceCurrency": "USD",
+          "description": "Commercial wholesale quote provided per buyer order specifications and FOB/CIF terms."
+        },
+        "availability": "https://schema.org/InStock",
+        "seller": {
+          "@id": "{{ CANONICAL_DOMAIN }}/#organization"
+        }
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_url }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ CANONICAL_DOMAIN }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Products",
+          "item": "{{ CANONICAL_DOMAIN }}/products/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ product.name|escapejs }}",
+          "item": "{{ canonical_url }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 
@@ -13,11 +79,11 @@
     <div class="product-hero-inner">
       <!-- Left: Product Text & Inquire CTA -->
       <div class="product-hero-text">
-        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        <nav aria-label="Breadcrumb" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
           <a href="{% url 'core:home' %}" style="color: var(--color-forest-deep); font-weight: 500;">Home</a> &nbsp;/&nbsp;
           <a href="{% url 'core:product_list' %}" style="color: var(--color-forest-deep); font-weight: 500;">Products</a> &nbsp;/&nbsp;
-          <span>{{ product.name }}</span>
-        </div>
+          <span aria-current="page" style="color: var(--text-dark);">{{ product.name }}</span>
+        </nav>
 
         <span class="product-hero-tag">Product &bull; Indian Origin</span>
         <h1 class="product-hero-title">{{ product.name }}</h1>
@@ -37,18 +103,18 @@
 
       <!-- Right: Prominent Authentic Product Image -->
       <div class="product-hero-image-box">
-        {% if product.slug == 'raw-tobacco-leaf' %}
+        {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
           <picture>
             <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-            <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf - Kailash Global Impex">
+            <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export from India - Kailash Global Impex" width="600" height="400">
           </picture>
-        {% elif product.slug == 'moringa-leaf-powder' %}
+        {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
           <picture>
             <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-            <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder - Kailash Global Impex">
+            <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export from India - Kailash Global Impex" width="600" height="400">
           </picture>
         {% elif product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex">
+          <img src="{{ product.image.url }}" alt="{{ product.name }} Export from India - Kailash Global Impex" width="600" height="400">
         {% endif %}
       </div>
     </div>
@@ -159,7 +225,45 @@
 </section>
 
 <!-- =========================================================================
-     6. PRODUCT INQUIRY CTA
+     6. PRODUCT PROCUREMENT FAQS
+     ========================================================================= -->
+<section class="section section-soft" id="product-faqs">
+  <div class="container container-narrow">
+    <div class="section-header" style="margin-bottom: 2rem;">
+      <span class="section-tag">Procurement FAQs</span>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-subtitle">
+        Common procurement and commercial questions about {{ product.name }} export.
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <div style="background: var(--color-bg-purewhite); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem 1.75rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.15rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">How is {{ product.name }} sourced and graded?</h3>
+        <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.65; margin: 0;">
+          Kailash Global Impex procures {{ product.name }} directly from established Indian agricultural origins. Grading, sorting, and quality parameters are aligned strictly according to buyer commercial agreements and export standards.
+        </p>
+      </div>
+
+      <div style="background: var(--color-bg-purewhite); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem 1.75rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.15rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">What export packaging options are available?</h3>
+        <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.65; margin: 0;">
+          Commodities are packed in seaworthy, export-grade packaging suitable for containerized international transit. Packaging specifications and labeling can be customized based on destination regulatory requirements and buyer purchase orders.
+        </p>
+      </div>
+
+      <div style="background: var(--color-bg-purewhite); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem 1.75rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.15rem; color: var(--color-forest-dark); margin-bottom: 0.5rem;">How can commercial buyers request pricing and availability?</h3>
+        <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.65; margin: 0;">
+          International buyers can submit their required volume, delivery timeline, and destination port via our trade inquiry form or connect directly with our trade desk on WhatsApp or Email for a formal commercial quote.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     7. PRODUCT INQUIRY CTA
      ========================================================================= -->
 <section class="section section-white" style="text-align: center; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
   <div class="container container-narrow">
@@ -175,7 +279,7 @@
 </section>
 
 <!-- =========================================================================
-     7. RELATED PRODUCT
+     8. RELATED PRODUCT
      ========================================================================= -->
 {% if other_products %}
 <section class="section section-soft">
@@ -189,18 +293,18 @@
       {% for item in other_products %}
       <article class="product-card">
         <div class="product-image-box">
-          {% if item.slug == 'raw-tobacco-leaf' %}
+          {% if item.slug == 'raw-tobacco-leaf' and not item.image %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf - Kailash Global Impex" loading="lazy">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export from India - Kailash Global Impex" width="500" height="350" loading="lazy">
             </picture>
-          {% elif item.slug == 'moringa-leaf-powder' %}
+          {% elif item.slug == 'moringa-leaf-powder' and not item.image %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder - Kailash Global Impex" loading="lazy">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export from India - Kailash Global Impex" width="500" height="350" loading="lazy">
             </picture>
           {% elif item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
+            <img src="{{ item.image.url }}" alt="{{ item.name }} Export from India - Kailash Global Impex" width="500" height="350" loading="lazy">
           {% endif %}
           <div class="product-badge">Origin: {{ item.origin }}</div>
         </div>

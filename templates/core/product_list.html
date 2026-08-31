@@ -1,7 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Export Products | Kailash Global Impex{% endblock %}
+{% block title %}{{ page_title|default:"Agricultural Export Products | Kailash Global Impex" }}{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data: CollectionPage JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "{{ CANONICAL_DOMAIN }}/products/#webpage",
+  "url": "{{ CANONICAL_DOMAIN }}/products/",
+  "name": "Agricultural Export Products | Kailash Global Impex",
+  "description": "Explore export-grade agricultural commodities from India by Kailash Global Impex: Premium Raw Tobacco Leaf and Pure Moringa Leaf Powder for commercial buyers.",
+  "isPartOf": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#website"
+  },
+  "about": {
+    "@id": "{{ CANONICAL_DOMAIN }}/#organization"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ CANONICAL_DOMAIN }}/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Products",
+        "item": "{{ CANONICAL_DOMAIN }}/products/"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 
@@ -10,7 +47,7 @@
   <div class="container text-center">
     <span class="section-tag">Export Commodities</span>
     <h1 class="section-title" style="font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin-bottom: 0.5rem;">
-      Agricultural Products
+      Agricultural Export Products
     </h1>
     <p class="section-subtitle" style="max-width: 640px; margin: 0 auto;">
       Export-grade agricultural commodities sourced from India for international commercial buyers and processors.
@@ -25,18 +62,18 @@
       {% for product in products %}
       <article class="product-card">
         <div class="product-image-box">
-          {% if product.slug == 'raw-tobacco-leaf' %}
+          {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" loading="lazy">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw Tobacco Leaf Export - Kailash Global Impex" width="600" height="400" loading="lazy">
             </picture>
-          {% elif product.slug == 'moringa-leaf-powder' %}
+          {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" loading="lazy">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa Leaf Powder Export - Kailash Global Impex" width="600" height="400" loading="lazy">
             </picture>
           {% elif product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" loading="lazy">
+            <img src="{{ product.image.url }}" alt="{{ product.name }} - Kailash Global Impex" width="600" height="400" loading="lazy">
           {% endif %}
           <div class="product-badge">Origin: {{ product.origin }}</div>
         </div>
