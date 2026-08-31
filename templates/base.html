@@ -29,6 +29,11 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="{% static 'images/branding/logo.png' %}">
 
+  <!-- Google Fonts Preconnect & Stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap">
+
   <!-- Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   
@@ -109,7 +114,10 @@
   {% block intro_overlay %}
   <div id="intro-overlay" aria-hidden="true">
     <div class="intro-content">
-      <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Official Logo" class="intro-logo" width="80" height="80">
+      <picture>
+        <source srcset="{% static 'images/branding/logo.webp' %}" type="image/webp">
+        <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Official Logo" class="intro-logo" width="80" height="80">
+      </picture>
       <div class="intro-title">Kailash Global Impex</div>
       <p class="intro-tagline">Connecting Markets, Delivering Excellence</p>
       <div class="intro-line"></div>
@@ -343,9 +351,9 @@
   </div>
 
   <!-- Scripts: GSAP + ScrollTrigger + Main Bundle -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="{% static 'js/main.js' %}"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="{% static 'js/main.js' %}"></script>
   {% block extra_scripts %}{% endblock %}
 
 </body>

@@ -5,8 +5,6 @@
    Deep Forest Accents (#0F382A, #09261E), and Warm Gold (#D4AF37, #C5A880)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
 :root {
   /* Brand Core Palette */
   --color-forest-dark:  #09261e;

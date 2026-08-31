@@ -4,6 +4,9 @@
 {% block title %}{{ page_title|default:"Kailash Global Impex | B2B Agricultural Export Enterprise India" }}{% endblock %}
 
 {% block extra_head %}
+<!-- Preload LCP Hero Image (Slide 1) -->
+<link rel="preload" as="image" href="{% static 'images/hero/port_hero_1.webp' %}" type="image/webp" fetchpriority="high">
+
 <!-- Structured Data: WebSite JSON-LD -->
 <script type="application/ld+json">
 {
