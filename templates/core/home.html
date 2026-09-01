@@ -133,12 +133,12 @@
         <div class="product-image-box">
           {% if product.slug == 'raw-tobacco-leaf' %}
             <picture>
-              <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
+              <source srcset="{% static 'images/products/tobacco-thumb.webp' %} 500w, {% static 'images/products/tobacco.webp' %} 900w" sizes="(max-width: 768px) 100vw, 400px" type="image/webp">
               <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif product.slug == 'moringa-leaf-powder' %}
             <picture>
-              <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
+              <source srcset="{% static 'images/products/moringa-thumb.webp' %} 500w, {% static 'images/products/moringa.webp' %} 900w" sizes="(max-width: 768px) 100vw, 400px" type="image/webp">
               <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif product.image %}
@@ -220,7 +220,7 @@
   <div class="container container-wide">
     <div class="trade-visual-container">
       <div class="section-header" style="margin-bottom: 2rem;">
-        <span class="section-tag" style="color:var(--color-gold-bright);">Global Trade Visual</span>
+        <span class="section-tag">Global Trade Visual</span>
         <h2 class="section-title" style="color:#ffffff;">India &rarr; International Markets</h2>
         <p class="section-subtitle" style="color:#ccd8d1;">
           Visual representation connecting our Indian sourcing origin with international commercial markets.
