@@ -31,8 +31,6 @@ DEFAULT_ALLOWED_HOSTS = [
     'kailashglobalimpex.com',
     'www.kailashglobalimpex.com',
     'kailashglobalimpex.onrender.com',
-    'vedop.fun',
-    'www.vedop.fun',
     'localhost',
     '127.0.0.1',
     '[::1]',
@@ -56,8 +54,6 @@ DEFAULT_CSRF_TRUSTED_ORIGINS = [
     'https://kailashglobalimpex.com',
     'https://www.kailashglobalimpex.com',
     'https://kailashglobalimpex.onrender.com',
-    'https://vedop.fun',
-    'https://www.vedop.fun',
     'http://localhost',
     'http://127.0.0.1',
     'http://localhost:8000',
@@ -96,7 +92,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'core.middleware.DomainMigrationMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -242,5 +237,6 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes')
+    # Render edge proxy handles HTTP->HTTPS termination. Disable Django-level SSL redirects to prevent loops.
+    SECURE_SSL_REDIRECT = False
 
