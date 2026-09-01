@@ -5,13 +5,11 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initIntroAnimation();
   initStickyHeader();
   initMobileDrawer();
   initHeroSlideshow();
   initTradeCorridorsCanvas();
   initInquiryFormAjax();
-  initGSAPPageAnimations();
 });
 
 /* ==========================================================================
@@ -59,41 +57,8 @@ function initHeroSlideshow() {
 }
 
 /* ==========================================================================
-   1. GSAP INTRO ANIMATION SEQUENCE (Non-blocking)
+   1. STICKY HEADER & SCROLL BEHAVIOR
    ========================================================================== */
-function initIntroAnimation() {
-  const overlay = document.getElementById('intro-overlay');
-  if (!overlay) return;
-
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const hasSeenIntro = sessionStorage.getItem('kgi_intro_played');
-
-  if (prefersReduced || hasSeenIntro) {
-    overlay.style.display = 'none';
-    return;
-  }
-
-  if (typeof gsap !== 'undefined') {
-    const tl = gsap.timeline({
-      onComplete: () => {
-        overlay.classList.add('hidden');
-        sessionStorage.setItem('kgi_intro_played', 'true');
-        setTimeout(() => overlay.remove(), 400);
-      }
-    });
-
-    tl.to('.intro-logo', { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' })
-      .to('.intro-title', { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, '-=0.1')
-      .to('.intro-tagline', { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, '-=0.15')
-      .to('.intro-line', { width: '120px', duration: 0.25, ease: 'power2.inOut' }, '-=0.2')
-      .to(overlay, { opacity: 0, duration: 0.3, delay: 0.3, ease: 'power2.inOut' });
-  } else {
-    setTimeout(() => {
-      overlay.classList.add('hidden');
-      sessionStorage.setItem('kgi_intro_played', 'true');
-    }, 1000);
-  }
-}
 
 /* ==========================================================================
    2. STICKY HEADER & SCROLL BEHAVIOR
@@ -381,132 +346,4 @@ function showToast(message, type = 'success') {
     toast.style.opacity = '0';
     setTimeout(() => toast.remove(), 400);
   }, 6000);
-}
-
-/* ==========================================================================
-   7. COMPREHENSIVE GSAP ENTRANCE & SCROLL ANIMATIONS
-   ========================================================================== */
-function initGSAPPageAnimations() {
-  if (typeof gsap === 'undefined') return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  // Hero Entrance Sequence (Fast & Elegant: 0.5s total)
-  const heroContent = document.querySelector('.hero-content');
-  if (heroContent) {
-    const heroTl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-    heroTl.from('.hero-badge', { opacity: 0, y: 15, duration: 0.4 })
-          .from('.hero-title', { opacity: 0, y: 20, duration: 0.45 }, '-=0.25')
-          .from('.hero-tagline', { opacity: 0, y: 15, duration: 0.35 }, '-=0.25')
-          .from('.hero-subtitle', { opacity: 0, y: 15, duration: 0.4 }, '-=0.2')
-          .from('.hero-actions .btn', { opacity: 0, y: 15, duration: 0.35, stagger: 0.1 }, '-=0.2');
-  }
-
-  // Product Hero Entrance
-  const productHero = document.querySelector('.product-hero-inner');
-  if (productHero) {
-    const pTl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-    pTl.from('.product-hero-text > *', { opacity: 0, y: 20, duration: 0.4, stagger: 0.08 })
-       .from('.product-hero-image-box', { opacity: 0, scale: 0.95, duration: 0.5 }, '-=0.3');
-  }
-
-  // If ScrollTrigger is available
-  if (typeof ScrollTrigger !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Section Titles & Subtitles
-    gsap.utils.toArray('.section-header').forEach(header => {
-      gsap.from(header, {
-        scrollTrigger: { trigger: header, start: 'top 88%' },
-        opacity: 0,
-        y: 25,
-        duration: 0.5,
-        ease: 'power2.out'
-      });
-    });
-
-    // 3+2 Balanced Why Choose Us Cards
-    gsap.utils.toArray('.why-choose-card-premium').forEach((card, i) => {
-      gsap.from(card, {
-        scrollTrigger: { trigger: card, start: 'top 88%' },
-        opacity: 0,
-        y: 30,
-        duration: 0.45,
-        delay: (i % 3) * 0.1,
-        ease: 'power2.out'
-      });
-    });
-
-    // Featured Product Cards
-    gsap.utils.toArray('.product-card').forEach((card, i) => {
-      gsap.from(card, {
-        scrollTrigger: { trigger: card, start: 'top 85%' },
-        opacity: 0,
-        y: 35,
-        duration: 0.5,
-        delay: i * 0.15,
-        ease: 'power2.out'
-      });
-    });
-
-    // Approach Steps
-    gsap.utils.toArray('.approach-step-card').forEach((step, i) => {
-      gsap.from(step, {
-        scrollTrigger: { trigger: step, start: 'top 85%' },
-        opacity: 0,
-        y: 30,
-        duration: 0.5,
-        delay: i * 0.15,
-        ease: 'power2.out'
-      });
-    });
-
-    // Leadership / Partner Cards
-    gsap.utils.toArray('.leader-card').forEach((leader, i) => {
-      gsap.from(leader, {
-        scrollTrigger: { trigger: leader, start: 'top 85%' },
-        opacity: 0,
-        y: 30,
-        duration: 0.5,
-        delay: i * 0.15,
-        ease: 'power2.out'
-      });
-    });
-
-    // Contact Cards & Form
-    const contactCards = document.querySelectorAll('.contact-info-card');
-    if (contactCards.length) {
-      gsap.from(contactCards, {
-        scrollTrigger: { trigger: contactCards[0], start: 'top 85%' },
-        opacity: 0,
-        x: -20,
-        duration: 0.4,
-        stagger: 0.08,
-        ease: 'power2.out'
-      });
-    }
-
-    const inquiryFormCard = document.querySelector('.inquiry-form-card');
-    if (inquiryFormCard) {
-      gsap.from(inquiryFormCard, {
-        scrollTrigger: { trigger: inquiryFormCard, start: 'top 85%' },
-        opacity: 0,
-        y: 30,
-        duration: 0.5,
-        ease: 'power2.out'
-      });
-    }
-
-    // Coming Soon / Certificates Card
-    const comingSoonCard = document.querySelector('.compliance-coming-soon');
-    if (comingSoonCard) {
-      gsap.from(comingSoonCard, {
-        scrollTrigger: { trigger: comingSoonCard, start: 'top 85%' },
-        opacity: 0,
-        scale: 0.96,
-        y: 20,
-        duration: 0.5,
-        ease: 'power2.out'
-      });
-    }
-  }
 }

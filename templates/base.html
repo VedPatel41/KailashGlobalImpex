@@ -37,24 +37,13 @@
   <link rel="manifest" href="{% url 'core:site_manifest' %}">
   <meta name="theme-color" content="#09261e">
 
-  <!-- Google Fonts Non-Blocking Optimized Loading -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-  </noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
-  <!-- Immediate Non-Blocking Intro Overlay State Check -->
-  <script>
-    if (sessionStorage.getItem('kgi_intro_played') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.documentElement.classList.add('intro-skipped');
-    }
-  </script>
   
   <!-- Structured Data: Organization JSON-LD -->
   <script type="application/ld+json">
@@ -130,30 +119,13 @@
 <body>
 
   <!-- =========================================================================
-       1. GSAP INTRO ANIMATION OVERLAY (1.5 Seconds)
-       ========================================================================= -->
-  {% block intro_overlay %}
-  <div id="intro-overlay" aria-hidden="true">
-    <div class="intro-content">
-      <picture>
-        <source srcset="{% static 'images/branding/logo.webp' %}" type="image/webp">
-        <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Official Logo" class="intro-logo" width="80" height="80">
-      </picture>
-      <div class="intro-title">Kailash Global Impex</div>
-      <p class="intro-tagline">Connecting Markets, Delivering Excellence</p>
-      <div class="intro-line"></div>
-    </div>
-  </div>
-  {% endblock %}
-
-  <!-- =========================================================================
-       2. HEADER & NAVIGATION
+       1. HEADER & NAVIGATION
        ========================================================================= -->
   <header class="site-header" id="site-header">
     <div class="container container-wide">
       <div class="header-inner">
         <!-- Brand -->
-        <a href="{% url 'core:home' %}" class="brand-link" aria-label="Kailash Global Impex Home">
+        <a href="{% url 'core:home' %}" class="brand-link" title="Kailash Global Impex Home">
           <picture>
             <source srcset="{% static 'images/branding/logo.webp' %}" type="image/webp">
             <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Logo" class="brand-logo" width="44" height="44">
