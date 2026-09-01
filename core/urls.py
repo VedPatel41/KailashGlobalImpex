@@ -14,4 +14,7 @@ urlpatterns = [
     path('submit-inquiry/', views.submit_inquiry, name='submit_inquiry'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('favicon.ico', views.favicon_view, name='favicon'),
+    path('site.webmanifest', views.site_manifest_view, name='site_manifest'),
+    path('manifest.json', views.site_manifest_view, name='manifest_json'),
 ]

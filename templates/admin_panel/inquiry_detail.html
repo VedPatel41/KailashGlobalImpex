@@ -135,6 +135,10 @@
         <a href="tel:{{ inquiry.mobile_number }}" class="crm-btn crm-btn-outline" style="justify-content:center;">
           📞 Direct Phone Call
         </a>
+        <a href="{% url 'admin_panel:inquiry_delete' pk=inquiry.pk %}" class="crm-btn admin-btn-danger" style="justify-content:center; margin-top:0.5rem; height:42px; font-size:0.85rem;">
+          <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+          <span>Delete Feedback</span>
+        </a>
       </div>
     </div>
   </div>

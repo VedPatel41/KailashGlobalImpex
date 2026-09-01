@@ -44,6 +44,9 @@ class CoreViewsTestCase(TestCase):
             self.assertEqual(response.status_code, 200, f"Failed on URL: {url}")
 
     def test_inquiry_submission_success(self):
+        from django.core import mail
+        mail.outbox = []
+
         payload = {
             'name': 'Ahmed Al-Mansoor',
             'email': 'procurement@gulfdistributors.ae',
@@ -65,6 +68,13 @@ class CoreViewsTestCase(TestCase):
         self.assertEqual(inquiry.company_name, 'Gulf Commodity Trading LLC')
         self.assertEqual(inquiry.product, 'Raw Tobacco Leaf')
         self.assertEqual(inquiry.status, Inquiry.STATUS_NEW)
+
+        # Verify notification email was dispatched to business mailbox
+        self.assertEqual(len(mail.outbox), 1)
+        sent_mail = mail.outbox[0]
+        self.assertIn('info@kailashglobalimpex.com', sent_mail.to)
+        self.assertIn('Ahmed Al-Mansoor', sent_mail.body)
+        self.assertIn('Raw Tobacco Leaf', sent_mail.body)
 
     def test_inquiry_honeypot_spam_rejection(self):
         payload = {
@@ -103,17 +113,17 @@ class CoreViewsTestCase(TestCase):
 
 class DomainConfigurationTestCase(TestCase):
     """
-    Validates that the new production domains (vedop.fun, www.vedop.fun)
-    and existing Render domain (kailashglobalimpex.onrender.com) are properly accepted.
+    Validates that the production domains (kailashglobalimpex.com, www.kailashglobalimpex.com)
+    and Render domain (kailashglobalimpex.onrender.com) are properly accepted.
     """
 
     def test_production_hosts_accepted(self):
         hosts = [
-            'vedop.fun',
-            'www.vedop.fun',
-            'kailashglobalimpex.onrender.com',
             'kailashglobalimpex.com',
             'www.kailashglobalimpex.com',
+            'kailashglobalimpex.onrender.com',
+            'vedop.fun',
+            'www.vedop.fun',
             'localhost',
             '127.0.0.1',
         ]
@@ -124,17 +134,17 @@ class DomainConfigurationTestCase(TestCase):
     def test_csrf_trusted_origins_configuration(self):
         from django.conf import settings
         required_origins = [
-            'https://vedop.fun',
-            'https://www.vedop.fun',
+            'https://kailashglobalimpex.com',
+            'https://www.kailashglobalimpex.com',
             'https://kailashglobalimpex.onrender.com',
         ]
         for origin in required_origins:
             self.assertIn(origin, settings.CSRF_TRUSTED_ORIGINS, f"Origin '{origin}' is missing from CSRF_TRUSTED_ORIGINS")
 
     def test_dynamic_site_domain_context_processor(self):
-        response = self.client.get('/', HTTP_HOST='vedop.fun', secure=True)
+        response = self.client.get('/', HTTP_HOST='kailashglobalimpex.com', secure=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'https://vedop.fun')
+        self.assertContains(response, 'https://kailashglobalimpex.com')
 
     def test_post_with_csrf_on_custom_domain(self):
         csrf_client = Client(enforce_csrf_checks=True)
@@ -149,13 +159,13 @@ class DomainConfigurationTestCase(TestCase):
             'remarks': 'Testing',
             'website_url': '',
         }
-        get_resp = csrf_client.get(reverse('core:contact'), HTTP_HOST='vedop.fun', secure=True)
+        get_resp = csrf_client.get(reverse('core:contact'), HTTP_HOST='kailashglobalimpex.com', secure=True)
         csrf_token = get_resp.cookies['csrftoken'].value
         response = csrf_client.post(
             reverse('core:submit_inquiry'),
             data=payload,
-            HTTP_HOST='vedop.fun',
-            HTTP_ORIGIN='https://vedop.fun',
+            HTTP_HOST='kailashglobalimpex.com',
+            HTTP_ORIGIN='https://kailashglobalimpex.com',
             HTTP_X_CSRFTOKEN=csrf_token,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest',
             secure=True
@@ -206,7 +216,7 @@ class SitemapAndRobotsTestCase(TestCase):
         )
 
     def test_sitemap_get_success_and_headers(self):
-        response = self.client.get('/sitemap.xml', HTTP_HOST='vedop.fun')
+        response = self.client.get('/sitemap.xml', HTTP_HOST='kailashglobalimpex.com')
         self.assertEqual(response.status_code, 200)
         self.assertIn('application/xml', response['Content-Type'])
         # X-Robots-Tag: noindex must NOT be present (causes Google Search Console read failure)
@@ -215,14 +225,14 @@ class SitemapAndRobotsTestCase(TestCase):
         self.assertNotIn('noarchive', robots_tag.lower())
 
     def test_sitemap_head_request(self):
-        response = self.client.head('/sitemap.xml', HTTP_HOST='vedop.fun')
+        response = self.client.head('/sitemap.xml', HTTP_HOST='kailashglobalimpex.com')
         self.assertEqual(response.status_code, 200)
         self.assertIn('application/xml', response['Content-Type'])
 
     def test_sitemap_googlebot_user_agent(self):
         response = self.client.get(
             '/sitemap.xml',
-            HTTP_HOST='vedop.fun',
+            HTTP_HOST='kailashglobalimpex.com',
             HTTP_USER_AGENT='Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
         )
         self.assertEqual(response.status_code, 200)
@@ -230,7 +240,7 @@ class SitemapAndRobotsTestCase(TestCase):
         self.assertNotIn('noindex', robots_tag.lower())
 
     def test_sitemap_xml_validity_and_urls(self):
-        for host in ['vedop.fun', 'kailashglobalimpex.onrender.com', 'localhost']:
+        for host in ['kailashglobalimpex.com', 'kailashglobalimpex.onrender.com', 'localhost']:
             response = self.client.get('/sitemap.xml', HTTP_HOST=host)
             self.assertEqual(response.status_code, 200)
 
@@ -242,14 +252,14 @@ class SitemapAndRobotsTestCase(TestCase):
 
             # 8 expected canonical public URLs
             expected_urls = [
-                'https://vedop.fun/',
-                'https://vedop.fun/about/',
-                'https://vedop.fun/products/',
-                'https://vedop.fun/our-approach/',
-                'https://vedop.fun/certificates/',
-                'https://vedop.fun/contact/',
-                'https://vedop.fun/products/raw-tobacco-leaf/',
-                'https://vedop.fun/products/moringa-leaf-powder/',
+                'https://kailashglobalimpex.com/',
+                'https://kailashglobalimpex.com/about/',
+                'https://kailashglobalimpex.com/products/',
+                'https://kailashglobalimpex.com/our-approach/',
+                'https://kailashglobalimpex.com/certificates/',
+                'https://kailashglobalimpex.com/contact/',
+                'https://kailashglobalimpex.com/products/raw-tobacco-leaf/',
+                'https://kailashglobalimpex.com/products/moringa-leaf-powder/',
             ]
 
             self.assertEqual(len(locs), 8)
@@ -257,14 +267,14 @@ class SitemapAndRobotsTestCase(TestCase):
                 self.assertIn(expected, locs, f"Missing URL in sitemap for host {host}: {expected}")
 
             # Inactive product must NOT be in sitemap
-            self.assertNotIn('https://vedop.fun/products/inactive-test-product/', locs)
+            self.assertNotIn('https://kailashglobalimpex.com/products/inactive-test-product/', locs)
 
             # Private / admin / inquiry POST URLs must NOT be in sitemap
             for private in ['/admin/', '/admin-panel/', '/submit-inquiry/']:
                 self.assertFalse(any(private in loc for loc in locs), f"Private URL found in sitemap: {private}")
 
     def test_robots_txt_content_and_sitemap_reference(self):
-        response = self.client.get('/robots.txt', HTTP_HOST='vedop.fun')
+        response = self.client.get('/robots.txt', HTTP_HOST='kailashglobalimpex.com')
         self.assertEqual(response.status_code, 200)
         self.assertIn('text/plain', response['Content-Type'])
         content = response.content.decode('utf-8')
@@ -272,10 +282,10 @@ class SitemapAndRobotsTestCase(TestCase):
         self.assertIn('Allow: /', content)
         self.assertIn('Disallow: /admin/', content)
         self.assertIn('Disallow: /admin-panel/', content)
-        self.assertIn('Sitemap: https://vedop.fun/sitemap.xml', content)
+        self.assertIn('Sitemap: https://kailashglobalimpex.com/sitemap.xml', content)
 
     def test_robots_txt_head_request(self):
-        response = self.client.head('/robots.txt', HTTP_HOST='vedop.fun')
+        response = self.client.head('/robots.txt', HTTP_HOST='kailashglobalimpex.com')
         self.assertEqual(response.status_code, 200)
 
 
@@ -312,20 +322,20 @@ class SEOTechnicalTestCase(TestCase):
         )
 
         self.public_urls = [
-            ('/', 'https://vedop.fun/'),
-            ('/about/', 'https://vedop.fun/about/'),
-            ('/products/', 'https://vedop.fun/products/'),
-            ('/products/raw-tobacco-leaf/', 'https://vedop.fun/products/raw-tobacco-leaf/'),
-            ('/products/moringa-leaf-powder/', 'https://vedop.fun/products/moringa-leaf-powder/'),
-            ('/our-approach/', 'https://vedop.fun/our-approach/'),
-            ('/certificates/', 'https://vedop.fun/certificates/'),
-            ('/contact/', 'https://vedop.fun/contact/'),
+            ('/', 'https://kailashglobalimpex.com/'),
+            ('/about/', 'https://kailashglobalimpex.com/about/'),
+            ('/products/', 'https://kailashglobalimpex.com/products/'),
+            ('/products/raw-tobacco-leaf/', 'https://kailashglobalimpex.com/products/raw-tobacco-leaf/'),
+            ('/products/moringa-leaf-powder/', 'https://kailashglobalimpex.com/products/moringa-leaf-powder/'),
+            ('/our-approach/', 'https://kailashglobalimpex.com/our-approach/'),
+            ('/certificates/', 'https://kailashglobalimpex.com/certificates/'),
+            ('/contact/', 'https://kailashglobalimpex.com/contact/'),
         ]
 
     def test_canonical_urls_always_use_production_domain(self):
         test_hosts = [
-            'vedop.fun',
-            'www.vedop.fun',
+            'kailashglobalimpex.com',
+            'www.kailashglobalimpex.com',
             'kailashglobalimpex.onrender.com',
             'localhost',
         ]
@@ -339,7 +349,7 @@ class SEOTechnicalTestCase(TestCase):
 
     def test_single_h1_per_page(self):
         for path, _ in self.public_urls:
-            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            response = self.client.get(path, HTTP_HOST='kailashglobalimpex.com')
             content = response.content.decode('utf-8')
             h1_matches = re.findall(r'<h1\b[^>]*>(.*?)</h1>', content, re.IGNORECASE | re.DOTALL)
             self.assertEqual(
@@ -352,7 +362,7 @@ class SEOTechnicalTestCase(TestCase):
         descriptions = set()
 
         for path, _ in self.public_urls:
-            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            response = self.client.get(path, HTTP_HOST='kailashglobalimpex.com')
             content = response.content.decode('utf-8')
 
             # Extract title
@@ -373,7 +383,7 @@ class SEOTechnicalTestCase(TestCase):
 
     def test_json_ld_structured_data_validity(self):
         for path, _ in self.public_urls:
-            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            response = self.client.get(path, HTTP_HOST='kailashglobalimpex.com')
             content = response.content.decode('utf-8')
 
             # Find all JSON-LD script blocks
@@ -390,32 +400,76 @@ class SEOTechnicalTestCase(TestCase):
 
     def test_organization_schema_present_on_all_pages(self):
         for path, _ in self.public_urls:
-            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            response = self.client.get(path, HTTP_HOST='kailashglobalimpex.com')
             content = response.content.decode('utf-8')
-            self.assertIn('https://vedop.fun/#organization', content)
+            self.assertIn('https://kailashglobalimpex.com/#organization', content)
             self.assertIn('Kailash Global Impex', content)
+            self.assertIn('info@kailashglobalimpex.com', content)
+            self.assertIn('https://www.linkedin.com/company/kailash-global-impex/', content)
             self.assertIn('Visnagar', content)
             self.assertIn('Gujarat', content)
             self.assertIn('384315', content)
 
     def test_product_detail_schema_and_breadcrumbs(self):
         for slug in ['raw-tobacco-leaf', 'moringa-leaf-powder']:
-            response = self.client.get(f'/products/{slug}/', HTTP_HOST='vedop.fun')
+            response = self.client.get(f'/products/{slug}/', HTTP_HOST='kailashglobalimpex.com')
             content = response.content.decode('utf-8')
             self.assertIn('"@type": "ItemPage"', content)
             self.assertNotIn('"@type": "Product"', content)
             self.assertIn('"@type": "BreadcrumbList"', content)
-            self.assertIn(f'https://vedop.fun/products/{slug}/', content)
+            self.assertIn(f'https://kailashglobalimpex.com/products/{slug}/', content)
             self.assertIn('Frequently Asked Questions', content)
 
     def test_all_images_have_alt_attributes(self):
         for path, _ in self.public_urls:
-            response = self.client.get(path, HTTP_HOST='vedop.fun')
+            response = self.client.get(path, HTTP_HOST='kailashglobalimpex.com')
             content = response.content.decode('utf-8')
             img_tags = re.findall(r'<img\b[^>]*>', content, re.IGNORECASE)
             for img in img_tags:
                 self.assertIn('alt="', img, f"Image missing alt attribute on {path}: {img}")
                 alt_val = re.search(r'alt="([^"]*)"', img).group(1)
                 self.assertTrue(len(alt_val.strip()) > 0, f"Empty alt attribute on {path}: {img}")
+
+    def test_favicon_and_manifest_endpoints(self):
+        # Direct root favicon endpoint
+        fav_resp = self.client.get('/favicon.ico')
+        self.assertEqual(fav_resp.status_code, 200)
+        self.assertEqual(fav_resp['Content-Type'], 'image/x-icon')
+
+        # Web manifest endpoints
+        for manifest_url in ['/site.webmanifest', '/manifest.json']:
+            man_resp = self.client.get(manifest_url)
+            self.assertEqual(man_resp.status_code, 200)
+            self.assertIn('application/manifest+json', man_resp['Content-Type'])
+            data = json.loads(man_resp.content.decode('utf-8'))
+            self.assertEqual(data['name'], 'Kailash Global Impex')
+            self.assertTrue(len(data['icons']) >= 2)
+
+    def test_linkedin_and_business_email_on_pages(self):
+        for path, _ in self.public_urls:
+            response = self.client.get(path, HTTP_HOST='kailashglobalimpex.com')
+            content = response.content.decode('utf-8')
+            self.assertIn('https://www.linkedin.com/company/kailash-global-impex/', content)
+            self.assertIn('info@kailashglobalimpex.com', content)
+            self.assertIn('mailto:info@kailashglobalimpex.com', content)
+
+    def test_public_navigation_sitemap_removed_and_admin_portal_present(self):
+        # Public website header/footer must not show a visible 'Sitemap' navigation link
+        response = self.client.get('/', HTTP_HOST='kailashglobalimpex.com')
+        content = response.content.decode('utf-8')
+        
+        # Verify Sitemap link is removed from navigation
+        self.assertNotIn('>Sitemap<', content)
+        self.assertNotIn('Partner Portal / CRM', content)
+        
+        # Verify Admin Portal link is present
+        self.assertIn('Admin Portal', content)
+        self.assertIn('/admin-panel/login/', content)
+        
+        # Verify /sitemap.xml is still fully accessible directly
+        sitemap_resp = self.client.get('/sitemap.xml', HTTP_HOST='kailashglobalimpex.com')
+        self.assertEqual(sitemap_resp.status_code, 200)
+        self.assertIn('application/xml', sitemap_resp['Content-Type'])
+
 
 

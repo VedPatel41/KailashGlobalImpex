@@ -122,13 +122,26 @@
             </select>
           </td>
           <td>
-            <a href="{% url 'admin_panel:inquiry_detail' pk=inquiry.pk %}" class="admin-btn admin-btn-primary" style="height:36px; padding:0 0.85rem; font-size:0.8rem;">
-              Open Detail &rarr;
-            </a>
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <a href="{% url 'admin_panel:inquiry_detail' pk=inquiry.pk %}" class="admin-btn admin-btn-primary" style="height:36px; padding:0 0.85rem; font-size:0.8rem;" title="Open detail">
+                Open Detail &rarr;
+              </a>
+              <button 
+                type="button" 
+                class="admin-btn-icon-delete js-delete-feedback" 
+                data-id="{{ inquiry.pk }}" 
+                data-name="{{ inquiry.name }}" 
+                data-url="{% url 'admin_panel:inquiry_delete' pk=inquiry.pk %}" 
+                title="Delete feedback" 
+                aria-label="Delete feedback #{{ inquiry.pk }}"
+              >
+                <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+              </button>
+            </div>
           </td>
         </tr>
         {% empty %}
-        <tr>
+        <tr id="emptyTableNotice">
           <td colspan="9" style="text-align:center; padding: 3.5rem 1rem; color:#62756c;">
             No trade inquiries matched the specified filters.
           </td>
@@ -160,6 +173,27 @@
   {% endif %}
 </div>
 
+<!-- Delete Feedback Confirmation Modal -->
+<div class="admin-modal-backdrop" id="deleteFeedbackModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+  <div class="admin-modal-card">
+    <div class="admin-modal-icon-danger">
+      <i data-lucide="alert-triangle" style="width:28px;height:28px;"></i>
+    </div>
+    <h3 class="admin-modal-title" id="deleteModalTitle">Delete Feedback</h3>
+    <p class="admin-modal-text" id="deleteModalMessage">
+      Are you sure you want to delete this feedback? This action cannot be undone.
+    </p>
+    <div class="admin-modal-actions">
+      <button type="button" class="admin-btn admin-btn-outline" id="btnCancelDelete" style="height:42px; min-width:110px;">
+        Cancel
+      </button>
+      <button type="button" class="admin-btn admin-btn-danger" id="btnConfirmDelete" style="height:42px; min-width:110px;">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -168,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusSelects = document.querySelectorAll('.js-quick-status');
   const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
+  // Inline Status Updater
   statusSelects.forEach(select => {
     select.addEventListener('change', async () => {
       const url = select.dataset.url;
@@ -196,20 +231,142 @@ document.addEventListener('DOMContentLoaded', () => {
             badge.textContent = data.status_display;
           }
           // Toast
-          const container = document.getElementById('toastContainer');
-          if (container) {
-            const toast = document.createElement('div');
-            toast.className = 'admin-toast';
-            toast.innerHTML = `<div class="toast-content"><span class="toast-icon">✓</span><span>${data.message}</span></div>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
-          }
+          showToast(data.message);
         }
       } catch (err) {
         console.error(err);
       }
     });
   });
+
+  // Delete Feedback Modal & Action
+  const deleteModal = document.getElementById('deleteFeedbackModal');
+  const deleteModalMessage = document.getElementById('deleteModalMessage');
+  const btnCancelDelete = document.getElementById('btnCancelDelete');
+  const btnConfirmDelete = document.getElementById('btnConfirmDelete');
+
+  let activeDeleteUrl = null;
+  let activeDeleteRow = null;
+
+  function openDeleteModal(name, url, row) {
+    activeDeleteUrl = url;
+    activeDeleteRow = row;
+    deleteModalMessage.innerHTML = `Are you sure you want to delete the feedback record from <strong>${name || 'this contact'}</strong>?<br><span style="color:#dc2626; font-size:0.85rem;">This action cannot be undone.</span>`;
+    deleteModal.classList.add('active');
+    deleteModal.setAttribute('aria-hidden', 'false');
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
+  function closeDeleteModal() {
+    deleteModal.classList.remove('active');
+    deleteModal.setAttribute('aria-hidden', 'true');
+    activeDeleteUrl = null;
+    activeDeleteRow = null;
+  }
+
+  document.querySelectorAll('.js-delete-feedback').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const name = btn.dataset.name;
+      const url = btn.dataset.url;
+      const row = btn.closest('tr');
+      openDeleteModal(name, url, row);
+    });
+  });
+
+  if (btnCancelDelete) {
+    btnCancelDelete.addEventListener('click', closeDeleteModal);
+  }
+
+  if (deleteModal) {
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) {
+        closeDeleteModal();
+      }
+    });
+  }
+
+  if (btnConfirmDelete) {
+    btnConfirmDelete.addEventListener('click', async () => {
+      if (!activeDeleteUrl || !activeDeleteRow) return;
+
+      btnConfirmDelete.disabled = true;
+      btnConfirmDelete.textContent = 'Deleting...';
+
+      try {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', csrfToken);
+
+        const response = await fetch(activeDeleteUrl, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Smooth row removal
+          activeDeleteRow.style.transition = 'all 0.3s ease';
+          activeDeleteRow.style.opacity = '0';
+          activeDeleteRow.style.transform = 'translateX(-20px)';
+          setTimeout(() => {
+            activeDeleteRow.remove();
+            const remainingRows = document.querySelectorAll('.admin-table tbody tr');
+            if (remainingRows.length === 0) {
+              const tbody = document.querySelector('.admin-table tbody');
+              if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 3.5rem 1rem; color:#62756c;">No trade inquiries matched the specified filters.</td></tr>';
+              }
+            }
+          }, 300);
+
+          showToast(data.message || 'Feedback deleted successfully.');
+          closeDeleteModal();
+        } else {
+          showToast(data.message || 'Failed to delete feedback.', 'error');
+        }
+      } catch (err) {
+        console.error('Delete error:', err);
+        showToast('Network error while deleting feedback.', 'error');
+      } finally {
+        btnConfirmDelete.disabled = false;
+        btnConfirmDelete.textContent = 'Delete';
+      }
+    });
+  }
+
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (container) {
+      const toast = document.createElement('div');
+      toast.className = `admin-toast ${type === 'error' ? 'admin-toast-error' : ''}`;
+      toast.innerHTML = `
+        <div class="toast-content">
+          <span class="toast-icon">${type === 'error' ? '✕' : '✓'}</span>
+          <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(50px)';
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    }
+  }
+
+  // Ensure Lucide icons render
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 });
 </script>
 {% endblock %}

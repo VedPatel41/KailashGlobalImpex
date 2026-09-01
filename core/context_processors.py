@@ -1,7 +1,7 @@
 from django.utils import timezone
 from .models import Product
 
-CANONICAL_DOMAIN = 'https://vedop.fun'
+CANONICAL_DOMAIN = 'https://kailashglobalimpex.com'
 
 
 def company_context(request):
@@ -14,13 +14,13 @@ def company_context(request):
     except Exception:
         global_products = []
 
-    # Guaranteed canonical production URL pointing to https://vedop.fun
+    # Guaranteed canonical production URL pointing to https://kailashglobalimpex.com
     canonical_url = f"{CANONICAL_DOMAIN}{request.path}"
 
     return {
         'COMPANY_NAME': 'Kailash Global Impex',
         'COMPANY_TAGLINE': 'Connecting Markets, Delivering Excellence',
-        'COMPANY_EMAIL': 'kailashglobalimpex@gmail.com',
+        'COMPANY_EMAIL': 'info@kailashglobalimpex.com',
         'COMPANY_PHONES': [
             {'display': '+91 9773140138', 'clean': '+919773140138', 'is_primary': True},
             {'display': '+91 73833 11112', 'clean': '+917383311112', 'is_primary': False},
@@ -32,6 +32,7 @@ def company_context(request):
         'COMPANY_COUNTRY': 'India',
         'COMPANY_PINCODE': '384315',
         'COMPANY_INSTAGRAM': 'https://www.instagram.com/kailashglobalimpex/',
+        'COMPANY_LINKEDIN': 'https://www.linkedin.com/company/kailash-global-impex/',
         'GLOBAL_PRODUCTS': global_products,
         'LEADERSHIP_PARTNERS': [
             {

@@ -92,18 +92,60 @@ class AdminPanelTestCase(TestCase):
         p.refresh_from_db()
         self.assertFalse(p.is_active)
 
+    def test_inquiry_delete_authenticated_post(self):
+        self.client.login(username='admin_tester', password='TestPassword123!')
+        inquiry_id = self.inquiry1.id
+        url = reverse('admin_panel:inquiry_delete', args=[inquiry_id])
+        
+        # Test GET renders confirm_delete page
+        get_res = self.client.get(url)
+        self.assertEqual(get_res.status_code, 200)
+        self.assertContains(get_res, "Delete Feedback")
+        
+        # Test POST permanently deletes from database
+        post_res = self.client.post(url)
+        self.assertEqual(post_res.status_code, 302)
+        self.assertFalse(Inquiry.objects.filter(id=inquiry_id).exists())
+
+    def test_inquiry_delete_ajax(self):
+        self.client.login(username='admin_tester', password='TestPassword123!')
+        inquiry = Inquiry.objects.create(
+            name='Temporary Contact',
+            email='temp@contact.com',
+            mobile_number='+91 9876543210',
+            country='India',
+            product='Raw Tobacco Leaf'
+        )
+        url = reverse('admin_panel:inquiry_delete', args=[inquiry.id])
+        res = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertTrue(data['success'])
+        self.assertIn('deleted successfully', data['message'])
+        self.assertFalse(Inquiry.objects.filter(id=inquiry.id).exists())
+
+    def test_inquiry_delete_unauthenticated_rejected(self):
+        url = reverse('admin_panel:inquiry_delete', args=[self.inquiry1.id])
+        res = self.client.post(url)
+        self.assertEqual(res.status_code, 302)
+        self.assertIn('/admin-panel/login/', res.url)
+        self.assertTrue(Inquiry.objects.filter(id=self.inquiry1.id).exists())
+
+    def test_inquiry_delete_non_existent(self):
+        self.client.login(username='admin_tester', password='TestPassword123!')
+        url = reverse('admin_panel:inquiry_delete', args=[99999])
+        res = self.client.post(url)
+        self.assertEqual(res.status_code, 404)
+
     def test_admin_on_custom_domain(self):
-        # Test custom admin login page on vedop.fun
-        res = self.client.get(reverse('admin_panel:login'), HTTP_HOST='vedop.fun', secure=True)
+        res = self.client.get(reverse('admin_panel:login'), HTTP_HOST='kailashglobalimpex.com', secure=True)
         self.assertEqual(res.status_code, 200)
 
-        # Test Django built-in admin login page on vedop.fun
-        django_admin_res = self.client.get('/admin/login/', HTTP_HOST='vedop.fun', secure=True)
+        django_admin_res = self.client.get('/admin/login/', HTTP_HOST='kailashglobalimpex.com', secure=True)
         self.assertEqual(django_admin_res.status_code, 200)
 
-        # Test login POST on vedop.fun with CSRF enforcement
         csrf_client = Client(enforce_csrf_checks=True)
-        get_res = csrf_client.get(reverse('admin_panel:login'), HTTP_HOST='vedop.fun', secure=True)
+        get_res = csrf_client.get(reverse('admin_panel:login'), HTTP_HOST='kailashglobalimpex.com', secure=True)
         csrf_token = get_res.cookies['csrftoken'].value
         login_res = csrf_client.post(
             reverse('admin_panel:login'),
@@ -112,8 +154,8 @@ class AdminPanelTestCase(TestCase):
                 'password': 'TestPassword123!',
                 'csrfmiddlewaretoken': csrf_token,
             },
-            HTTP_HOST='vedop.fun',
-            HTTP_ORIGIN='https://vedop.fun',
+            HTTP_HOST='kailashglobalimpex.com',
+            HTTP_ORIGIN='https://kailashglobalimpex.com',
             secure=True
         )
         self.assertEqual(login_res.status_code, 302)

@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
         # 1. Ensure Superuser / Staff User
         username = os.environ.get('KGI_ADMIN_USER', 'admin')
-        email = os.environ.get('KGI_ADMIN_EMAIL', 'kailashglobalimpex@gmail.com')
+        email = os.environ.get('KGI_ADMIN_EMAIL', 'info@kailashglobalimpex.com')
         password = os.environ.get('KGI_ADMIN_PASS')
 
         user, created = User.objects.get_or_create(

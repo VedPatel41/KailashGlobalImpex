@@ -217,6 +217,45 @@ def update_inquiry_status_ajax(request, pk):
 
 @login_required(login_url='admin_panel:login')
 @user_passes_test(is_staff_user, login_url='admin_panel:login')
+def inquiry_delete(request, pk):
+    """
+    Permanently delete an inquiry/feedback record from the database.
+    Supports both AJAX POST with JSON response and traditional POST/GET with confirm_delete page.
+    """
+    inquiry = get_object_or_404(Inquiry, pk=pk)
+
+    if request.method == 'POST':
+        inquiry_id = inquiry.id
+        inquiry_name = inquiry.name
+        inquiry.delete()
+
+        is_ajax = (
+            request.headers.get('x-requested-with') == 'XMLHttpRequest' or
+            'application/json' in request.headers.get('Accept', '')
+        )
+
+        success_msg = f"Feedback #{inquiry_id} from {inquiry_name} deleted successfully."
+        if is_ajax:
+            return JsonResponse({
+                'success': True,
+                'message': success_msg,
+                'deleted_id': inquiry_id,
+            })
+
+        messages.success(request, success_msg)
+        return redirect('admin_panel:inquiries_list')
+
+    return render(request, 'admin_panel/confirm_delete.html', {
+        'page_title': f"Delete Feedback #{inquiry.id} | Admin Portal",
+        'item_type': 'Feedback',
+        'item_name': f"#{inquiry.id} — {inquiry.name} ({inquiry.email})",
+        'cancel_url': 'admin_panel:inquiries_list',
+        'active_menu': 'inquiries',
+    })
+
+
+@login_required(login_url='admin_panel:login')
+@user_passes_test(is_staff_user, login_url='admin_panel:login')
 def export_inquiries_csv(request):
     """Export filtered or all inquiries to a formatted CSV."""
     queryset = Inquiry.objects.all().order_by('-created_at')

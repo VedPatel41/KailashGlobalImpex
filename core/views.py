@@ -1,6 +1,6 @@
 import logging
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
@@ -165,7 +165,7 @@ def submit_inquiry(request):
                 subject=subject,
                 message=message_body,
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[getattr(settings, 'COMPANY_NOTIFICATION_EMAIL', 'kailashglobalimpex@gmail.com')],
+                recipient_list=[getattr(settings, 'COMPANY_NOTIFICATION_EMAIL', 'info@kailashglobalimpex.com')],
                 fail_silently=True,
             )
         except Exception as exc:
@@ -203,7 +203,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin-panel/
 
-Sitemap: https://vedop.fun/sitemap.xml
+Sitemap: https://kailashglobalimpex.com/sitemap.xml
 """
     return HttpResponse(content, content_type="text/plain; charset=utf-8")
 
@@ -220,6 +220,28 @@ def sitemap_xml(request):
     elif 'X-Robots-Tag' in response:
         del response['X-Robots-Tag']
     return response
+
+
+def favicon_view(request):
+    """Serve root favicon.ico with appropriate headers."""
+    favicon_path = settings.BASE_DIR / 'static' / 'images' / 'branding' / 'favicon.ico'
+    if favicon_path.exists():
+        response = FileResponse(open(favicon_path, 'rb'), content_type='image/x-icon')
+        response['Cache-Control'] = 'public, max-age=86400'
+        return response
+    return HttpResponse(status=404)
+
+
+def site_manifest_view(request):
+    """Serve web application manifest."""
+    manifest_path = settings.BASE_DIR / 'static' / 'site.webmanifest'
+    if manifest_path.exists():
+        with open(manifest_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        response = HttpResponse(content, content_type='application/manifest+json; charset=utf-8')
+        response['Cache-Control'] = 'public, max-age=86400'
+        return response
+    return HttpResponse(status=404)
 
 
 def custom_404(request, exception=None):

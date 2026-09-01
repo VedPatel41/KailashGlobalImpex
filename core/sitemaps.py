@@ -1,6 +1,6 @@
 """
 Django sitemap definitions for Kailash Global Impex.
-Exposes only canonical, public, indexable pages on https://vedop.fun.
+Exposes only canonical, public, indexable pages on https://kailashglobalimpex.com.
 """
 
 from django.contrib.sitemaps import Sitemap
@@ -10,13 +10,13 @@ from .models import Product
 
 class CanonicalSite:
     """Production canonical site reference for sitemap URL generation."""
-    domain = 'vedop.fun'
+    domain = 'kailashglobalimpex.com'
     name = 'Kailash Global Impex'
 
 
 class CanonicalSitemap(Sitemap):
     """
-    Base sitemap enforcing HTTPS protocol and production canonical domain (vedop.fun).
+    Base sitemap enforcing HTTPS protocol and production canonical domain (kailashglobalimpex.com).
     """
     protocol = 'https'
 

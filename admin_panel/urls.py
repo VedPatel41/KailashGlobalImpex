@@ -12,6 +12,7 @@ urlpatterns = [
     path('inquiries/', views.inquiries_list, name='inquiries_list'),
     path('inquiries/<int:pk>/', views.inquiry_detail, name='inquiry_detail'),
     path('inquiries/<int:pk>/update-status/', views.update_inquiry_status_ajax, name='update_inquiry_status_ajax'),
+    path('inquiries/<int:pk>/delete/', views.inquiry_delete, name='inquiry_delete'),
     path('inquiries/export/csv/', views.export_inquiries_csv, name='export_inquiries_csv'),
     
     # Products CMS

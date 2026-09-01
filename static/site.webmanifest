@@ -1,0 +1,23 @@
+{
+  "name": "Kailash Global Impex",
+  "short_name": "Kailash Global",
+  "description": "B2B Agricultural Export Enterprise based in Visnagar, Gujarat, India.",
+  "icons": [
+    {
+      "src": "/static/images/branding/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/images/branding/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#09261e",
+  "background_color": "#09261e",
+  "display": "standalone",
+  "start_url": "/"
+}

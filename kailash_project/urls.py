@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.views.static import serve
 from django.urls import re_path
 
-from core.views import sitemap_xml
+from core.views import sitemap_xml, favicon_view, site_manifest_view
 
 urlpatterns = [
     # Custom Modern Corporate CRM Admin Panel
@@ -14,7 +14,10 @@ urlpatterns = [
     # Internal Standard Django Admin
     path('admin/', admin.site.urls),
     
-    # Standard Root Sitemap
+    # Standard Root SEO & Icon Endpoints
+    path('favicon.ico', favicon_view, name='favicon'),
+    path('site.webmanifest', site_manifest_view, name='site_manifest_root'),
+    path('manifest.json', site_manifest_view, name='manifest_json_root'),
     path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
     
     # Core Public Website

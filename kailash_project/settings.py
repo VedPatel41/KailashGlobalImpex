@@ -28,11 +28,11 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 # Allowed Hosts configuration
 # Production domains, Render URL, and localhost for development
 DEFAULT_ALLOWED_HOSTS = [
-    'vedop.fun',
-    'www.vedop.fun',
-    'kailashglobalimpex.onrender.com',
     'kailashglobalimpex.com',
     'www.kailashglobalimpex.com',
+    'kailashglobalimpex.onrender.com',
+    'vedop.fun',
+    'www.vedop.fun',
     'localhost',
     '127.0.0.1',
     '[::1]',
@@ -53,11 +53,11 @@ if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
 
 # CSRF Trusted Origins configuration for HTTPS requests & forms
 DEFAULT_CSRF_TRUSTED_ORIGINS = [
-    'https://vedop.fun',
-    'https://www.vedop.fun',
-    'https://kailashglobalimpex.onrender.com',
     'https://kailashglobalimpex.com',
     'https://www.kailashglobalimpex.com',
+    'https://kailashglobalimpex.onrender.com',
+    'https://vedop.fun',
+    'https://www.vedop.fun',
     'http://localhost',
     'http://127.0.0.1',
     'http://localhost:8000',
@@ -212,18 +212,19 @@ LOGIN_REDIRECT_URL = '/admin-panel/'
 LOGOUT_REDIRECT_URL = '/admin-panel/login/'
 
 
-# Email Configuration
+# Email Configuration (Hostinger SMTP for info@kailashglobalimpex.com)
 EMAIL_BACKEND = os.environ.get(
     'DJANGO_EMAIL_BACKEND',
     'django.core.mail.backends.console.EmailBackend' if DEBUG else 'django.core.mail.backends.smtp.EmailBackend'
 )
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.hostinger.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'kailashglobalimpex@gmail.com')
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False').lower() in ('true', '1', 'yes')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'info@kailashglobalimpex.com')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = f"Kailash Global Impex <{EMAIL_HOST_USER}>"
-COMPANY_NOTIFICATION_EMAIL = os.environ.get('COMPANY_NOTIFICATION_EMAIL', 'kailashglobalimpex@gmail.com')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', f"Kailash Global Impex <{EMAIL_HOST_USER}>")
+COMPANY_NOTIFICATION_EMAIL = os.environ.get('COMPANY_NOTIFICATION_EMAIL', 'info@kailashglobalimpex.com')
 
 
 # Reverse proxy SSL header and host forwarding (Essential for Render / Reverse Proxies / Load Balancers)
