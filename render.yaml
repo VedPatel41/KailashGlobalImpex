@@ -20,9 +20,9 @@ services:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DJANGO_ALLOWED_HOSTS
-        value: "kailashglobalimpex.com,www.kailashglobalimpex.com,kailashglobalimpex.onrender.com"
+        value: "kailashglobalimpex.com,www.kailashglobalimpex.com,kailashglobalimpex.onrender.com,vedop.fun,www.vedop.fun"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://kailashglobalimpex.com,https://www.kailashglobalimpex.com,https://kailashglobalimpex.onrender.com"
+        value: "https://kailashglobalimpex.com,https://www.kailashglobalimpex.com,https://kailashglobalimpex.onrender.com,https://vedop.fun,https://www.vedop.fun"
       - key: DATABASE_URL
         fromDatabase:
           name: kailash-global-db

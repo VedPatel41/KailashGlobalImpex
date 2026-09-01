@@ -448,12 +448,12 @@ class SEOTechnicalTestCase(TestCase):
             self.assertIn('mailto:info@kailashglobalimpex.com', content)
 
     def test_no_redirect_loops_on_production_domains(self):
-        # 1. Canonical host returns 200 OK directly
+        # 1. Canonical apex host returns 200 OK directly without any redirects
         res_apex = self.client.get('/', HTTP_HOST='kailashglobalimpex.com')
         self.assertEqual(res_apex.status_code, 200)
         self.assertIn('<link rel="canonical" href="https://kailashglobalimpex.com/">', res_apex.content.decode('utf-8'))
 
-        # 2. www host returns 200 OK directly with unified canonical tag
+        # 2. www host returns 200 OK directly with unified canonical tag (no redirect loop)
         res_www = self.client.get('/', HTTP_HOST='www.kailashglobalimpex.com')
         self.assertEqual(res_www.status_code, 200)
         self.assertIn('<link rel="canonical" href="https://kailashglobalimpex.com/">', res_www.content.decode('utf-8'))
@@ -466,6 +466,41 @@ class SEOTechnicalTestCase(TestCase):
         res_sitemap = self.client.get('/sitemap.xml', HTTP_HOST='kailashglobalimpex.com')
         self.assertEqual(res_sitemap.status_code, 200)
         self.assertIn('https://kailashglobalimpex.com/', res_sitemap.content.decode('utf-8'))
+
+    def test_legacy_domain_301_seo_migration(self):
+        # 1. vedop.fun/ -> 301 -> https://kailashglobalimpex.com/
+        res_old_root = self.client.get('/', HTTP_HOST='vedop.fun')
+        self.assertEqual(res_old_root.status_code, 301)
+        self.assertEqual(res_old_root.url, 'https://kailashglobalimpex.com/')
+
+        # 2. vedop.fun/about/ -> 301 -> https://kailashglobalimpex.com/about/
+        res_old_about = self.client.get('/about/', HTTP_HOST='vedop.fun')
+        self.assertEqual(res_old_about.status_code, 301)
+        self.assertEqual(res_old_about.url, 'https://kailashglobalimpex.com/about/')
+
+        # 3. vedop.fun/products/ -> 301 -> https://kailashglobalimpex.com/products/
+        res_old_prod = self.client.get('/products/', HTTP_HOST='vedop.fun')
+        self.assertEqual(res_old_prod.status_code, 301)
+        self.assertEqual(res_old_prod.url, 'https://kailashglobalimpex.com/products/')
+
+        # 4. www.vedop.fun/ -> 301 -> https://kailashglobalimpex.com/
+        res_old_www_root = self.client.get('/', HTTP_HOST='www.vedop.fun')
+        self.assertEqual(res_old_www_root.status_code, 301)
+        self.assertEqual(res_old_www_root.url, 'https://kailashglobalimpex.com/')
+
+        # 5. www.vedop.fun/about/ -> 301 -> https://kailashglobalimpex.com/about/
+        res_old_www_about = self.client.get('/about/', HTTP_HOST='www.vedop.fun')
+        self.assertEqual(res_old_www_about.status_code, 301)
+        self.assertEqual(res_old_www_about.url, 'https://kailashglobalimpex.com/about/')
+
+        # 6. Deep query parameters preserved: www.vedop.fun/products/raw-tobacco-leaf/?ref=google
+        res_deep = self.client.get('/products/raw-tobacco-leaf/?ref=google', HTTP_HOST='www.vedop.fun')
+        self.assertEqual(res_deep.status_code, 301)
+        self.assertEqual(res_deep.url, 'https://kailashglobalimpex.com/products/raw-tobacco-leaf/?ref=google')
+
+        # 7. Follow redirect and verify destination returns 200 OK directly (max 1 hop)
+        dest_res = self.client.get(res_deep.url.replace('https://kailashglobalimpex.com', ''), HTTP_HOST='kailashglobalimpex.com')
+        self.assertEqual(dest_res.status_code, 200)
 
 
 
