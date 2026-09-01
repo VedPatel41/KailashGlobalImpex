@@ -133,13 +133,13 @@
         <div class="product-image-box">
           {% if product.slug == 'raw-tobacco-leaf' %}
             <picture>
-              <source srcset="{% static 'images/products/tobacco-thumb.webp' %} 500w, {% static 'images/products/tobacco.webp' %} 900w" sizes="(max-width: 768px) 100vw, 400px" type="image/webp">
-              <img src="{% static 'images/products/tobacco.webp' %}" alt="Export-grade raw tobacco leaves in bulk" width="500" height="350" loading="lazy" decoding="async">
+              <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif product.slug == 'moringa-leaf-powder' %}
             <picture>
-              <source srcset="{% static 'images/products/moringa-thumb.webp' %} 500w, {% static 'images/products/moringa.webp' %} 900w" sizes="(max-width: 768px) 100vw, 400px" type="image/webp">
-              <img src="{% static 'images/products/moringa.webp' %}" alt="Pure green moringa leaf powder" width="500" height="350" loading="lazy" decoding="async">
+              <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif product.image %}
             <img src="{{ product.image.url }}" alt="{{ product.name }}" width="500" height="350" loading="lazy" decoding="async">
