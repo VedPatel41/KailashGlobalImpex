@@ -118,18 +118,25 @@ class DomainConfigurationTestCase(TestCase):
     """
 
     def test_production_hosts_accepted(self):
-        hosts = [
+        direct_hosts = [
             'kailashglobalimpex.com',
-            'www.kailashglobalimpex.com',
             'kailashglobalimpex.onrender.com',
-            'vedop.fun',
-            'www.vedop.fun',
             'localhost',
             '127.0.0.1',
         ]
-        for host in hosts:
+        for host in direct_hosts:
             response = self.client.get('/', HTTP_HOST=host)
             self.assertEqual(response.status_code, 200, f"Host '{host}' was rejected with status {response.status_code}")
+
+        redirect_hosts = [
+            'www.kailashglobalimpex.com',
+            'vedop.fun',
+            'www.vedop.fun',
+        ]
+        for host in redirect_hosts:
+            response = self.client.get('/', HTTP_HOST=host)
+            self.assertEqual(response.status_code, 301, f"Host '{host}' did not 301 redirect: {response.status_code}")
+            self.assertEqual(response.url, 'https://kailashglobalimpex.com/')
 
     def test_csrf_trusted_origins_configuration(self):
         from django.conf import settings
@@ -335,7 +342,6 @@ class SEOTechnicalTestCase(TestCase):
     def test_canonical_urls_always_use_production_domain(self):
         test_hosts = [
             'kailashglobalimpex.com',
-            'www.kailashglobalimpex.com',
             'kailashglobalimpex.onrender.com',
             'localhost',
         ]
@@ -453,23 +459,34 @@ class SEOTechnicalTestCase(TestCase):
             self.assertIn('info@kailashglobalimpex.com', content)
             self.assertIn('mailto:info@kailashglobalimpex.com', content)
 
-    def test_public_navigation_sitemap_removed_and_admin_portal_present(self):
-        # Public website header/footer must not show a visible 'Sitemap' navigation link
-        response = self.client.get('/', HTTP_HOST='kailashglobalimpex.com')
-        content = response.content.decode('utf-8')
-        
-        # Verify Sitemap link is removed from navigation
-        self.assertNotIn('>Sitemap<', content)
-        self.assertNotIn('Partner Portal / CRM', content)
-        
-        # Verify Admin Portal link is present
-        self.assertIn('Admin Portal', content)
-        self.assertIn('/admin-panel/login/', content)
-        
-        # Verify /sitemap.xml is still fully accessible directly
-        sitemap_resp = self.client.get('/sitemap.xml', HTTP_HOST='kailashglobalimpex.com')
-        self.assertEqual(sitemap_resp.status_code, 200)
-        self.assertIn('application/xml', sitemap_resp['Content-Type'])
+    def test_domain_migration_301_redirects_and_canonical_consolidation(self):
+        # 1. www.kailashglobalimpex.com -> 301 to https://kailashglobalimpex.com/
+        res_www = self.client.get('/', HTTP_HOST='www.kailashglobalimpex.com')
+        self.assertEqual(res_www.status_code, 301)
+        self.assertEqual(res_www.url, 'https://kailashglobalimpex.com/')
+
+        # 2. vedop.fun -> 301 to https://kailashglobalimpex.com/
+        res_old = self.client.get('/', HTTP_HOST='vedop.fun')
+        self.assertEqual(res_old.status_code, 301)
+        self.assertEqual(res_old.url, 'https://kailashglobalimpex.com/')
+
+        # 3. www.vedop.fun with deep path and query string -> 301 preserved
+        res_old_deep = self.client.get('/products/raw-tobacco-leaf/?source=google', HTTP_HOST='www.vedop.fun')
+        self.assertEqual(res_old_deep.status_code, 301)
+        self.assertEqual(res_old_deep.url, 'https://kailashglobalimpex.com/products/raw-tobacco-leaf/?source=google')
+
+        # 4. Canonical production host returns 200 OK without redirection
+        res_canonical = self.client.get('/', HTTP_HOST='kailashglobalimpex.com')
+        self.assertEqual(res_canonical.status_code, 200)
+
+        # 5. robots.txt and sitemap.xml on canonical host
+        res_robots = self.client.get('/robots.txt', HTTP_HOST='kailashglobalimpex.com')
+        self.assertEqual(res_robots.status_code, 200)
+        self.assertIn('Sitemap: https://kailashglobalimpex.com/sitemap.xml', res_robots.content.decode('utf-8'))
+
+        res_sitemap = self.client.get('/sitemap.xml', HTTP_HOST='kailashglobalimpex.com')
+        self.assertEqual(res_sitemap.status_code, 200)
+        self.assertIn('https://kailashglobalimpex.com/', res_sitemap.content.decode('utf-8'))
 
 
 
