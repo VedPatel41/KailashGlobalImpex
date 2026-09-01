@@ -277,18 +277,18 @@
       {% for item in other_products %}
       <article class="product-card">
         <div class="product-image-box">
-          {% if item.slug == 'raw-tobacco-leaf' and not item.image %}
+          {% if item.slug == 'raw-tobacco-leaf' %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw tobacco leaves in storage" width="500" height="350" loading="lazy">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Raw tobacco leaves in storage" width="500" height="350" loading="lazy" decoding="async">
             </picture>
-          {% elif item.slug == 'moringa-leaf-powder' and not item.image %}
+          {% elif item.slug == 'moringa-leaf-powder' %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa leaf powder" width="500" height="350" loading="lazy">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Moringa leaf powder" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.name }}" width="500" height="350" loading="lazy">
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" width="500" height="350" loading="lazy" decoding="async">
           {% endif %}
           <div class="product-badge">Origin: {{ item.origin }}</div>
         </div>
