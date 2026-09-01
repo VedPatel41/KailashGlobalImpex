@@ -1430,7 +1430,4 @@ img {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  #intro-overlay {
-    display: none !important;
-  }
 }
