@@ -18,24 +18,48 @@ document.addEventListener('DOMContentLoaded', () => {
    HERO PORT BACKGROUND SLIDESHOW (Subtle 7s Crossfade & Ken Burns)
    ========================================================================== */
 function initHeroSlideshow() {
+  const container = document.querySelector('.hero-slideshow-container');
   const slides = document.querySelectorAll('.hero-slideshow-container .hero-slide');
-  if (!slides || slides.length < 2) return;
+  if (!container || !slides || slides.length < 2) return;
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) return;
 
   let currentIdx = 0;
+  let intervalId = null;
   const slideInterval = 7000;
 
-  setInterval(() => {
-    slides[currentIdx].classList.remove('active');
-    currentIdx = (currentIdx + 1) % slides.length;
-    slides[currentIdx].classList.add('active');
-  }, slideInterval);
+  const start = () => {
+    if (intervalId) return;
+    intervalId = setInterval(() => {
+      slides[currentIdx].classList.remove('active');
+      currentIdx = (currentIdx + 1) % slides.length;
+      slides[currentIdx].classList.add('active');
+    }, slideInterval);
+  };
+
+  const stop = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) start();
+        else stop();
+      });
+    }, { threshold: 0.05 });
+    observer.observe(container);
+  } else {
+    start();
+  }
 }
 
 /* ==========================================================================
-   1. GSAP INTRO ANIMATION SEQUENCE (1.5 Seconds, Non-blocking)
+   1. GSAP INTRO ANIMATION SEQUENCE (Non-blocking)
    ========================================================================== */
 function initIntroAnimation() {
   const overlay = document.getElementById('intro-overlay');
@@ -54,20 +78,20 @@ function initIntroAnimation() {
       onComplete: () => {
         overlay.classList.add('hidden');
         sessionStorage.setItem('kgi_intro_played', 'true');
-        setTimeout(() => overlay.remove(), 600);
+        setTimeout(() => overlay.remove(), 400);
       }
     });
 
-    tl.to('.intro-logo', { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' })
-      .to('.intro-title', { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.1')
-      .to('.intro-tagline', { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, '-=0.15')
-      .to('.intro-line', { width: '120px', duration: 0.3, ease: 'power2.inOut' }, '-=0.2')
-      .to(overlay, { opacity: 0, duration: 0.4, delay: 0.4, ease: 'power2.inOut' });
+    tl.to('.intro-logo', { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' })
+      .to('.intro-title', { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, '-=0.1')
+      .to('.intro-tagline', { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, '-=0.15')
+      .to('.intro-line', { width: '120px', duration: 0.25, ease: 'power2.inOut' }, '-=0.2')
+      .to(overlay, { opacity: 0, duration: 0.3, delay: 0.3, ease: 'power2.inOut' });
   } else {
     setTimeout(() => {
       overlay.classList.add('hidden');
       sessionStorage.setItem('kgi_intro_played', 'true');
-    }, 1500);
+    }, 1000);
   }
 }
 
@@ -254,10 +278,28 @@ function initTradeCorridorsCanvas() {
     ctx.fillStyle = '#ffffff';
     ctx.fillText('ORIGIN: Gujarat, India', originPx.x - 60, originPx.y - 20);
 
-    animationId = requestAnimationFrame(render);
+    if (isCanvasVisible) {
+      animationId = requestAnimationFrame(render);
+    } else {
+      animationId = null;
+    }
   }
 
-  render();
+  let isCanvasVisible = false;
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isCanvasVisible = entry.isIntersecting;
+        if (isCanvasVisible && !animationId) {
+          render();
+        }
+      });
+    }, { threshold: 0.05 });
+    observer.observe(canvas);
+  } else {
+    isCanvasVisible = true;
+    render();
+  }
 }
 
 /* ==========================================================================

@@ -127,13 +127,21 @@ img {
   flex-direction: column;
   color: var(--text-light);
   pointer-events: all;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
+html.intro-skipped #intro-overlay,
 #intro-overlay.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #intro-overlay {
+    display: none !important;
+  }
 }
 
 .intro-content {
@@ -562,6 +570,28 @@ img {
 .hero-slide.active {
   opacity: 1;
   transform: scale(1.05);
+}
+
+.hero-slide-1 {
+  background-image: url('../images/hero/port_hero_1.webp');
+}
+.hero-slide-2 {
+  background-image: url('../images/hero/port_hero_2.webp');
+}
+.hero-slide-3 {
+  background-image: url('../images/hero/port_hero_3.webp');
+}
+
+@media (max-width: 768px) {
+  .hero-slide-1 {
+    background-image: url('../images/hero/port_hero_1-mobile.webp');
+  }
+  .hero-slide-2 {
+    background-image: url('../images/hero/port_hero_2-mobile.webp');
+  }
+  .hero-slide-3 {
+    background-image: url('../images/hero/port_hero_3-mobile.webp');
+  }
 }
 
 .hero-overlay {

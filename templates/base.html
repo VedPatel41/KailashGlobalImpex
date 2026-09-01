@@ -37,13 +37,24 @@
   <link rel="manifest" href="{% url 'core:site_manifest' %}">
   <meta name="theme-color" content="#09261e">
 
-  <!-- Google Fonts Preconnect & Stylesheet -->
+  <!-- Google Fonts Non-Blocking Optimized Loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  </noscript>
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+  <!-- Immediate Non-Blocking Intro Overlay State Check -->
+  <script>
+    if (sessionStorage.getItem('kgi_intro_played') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('intro-skipped');
+    }
+  </script>
   
   <!-- Structured Data: Organization JSON-LD -->
   <script type="application/ld+json">
@@ -224,49 +235,53 @@
         <a href="tel:+919773140138" style="color:#b3c5bc; display:flex; align-items:center; gap:0.5rem;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-          </svg>
-          <span>+91 9773140138 / +91 73833 11112</span>
-        </a>
+    </nav>
+
+    <div class="drawer-contact-box">
+      <div style="font-weight:700; font-size:0.88rem; color:var(--color-primary-dark); margin-bottom:0.6rem;">Trade Headquarters</div>
+      <div style="font-size:0.82rem; color:var(--color-text-muted); line-height:1.5; margin-bottom:0.75rem;">
+        Visnagar, Mehsana, Gujarat, India - 384315
+      </div>
+      <div style="font-size:0.82rem; margin-bottom:0.4rem;">
+        <a href="mailto:{{ COMPANY_EMAIL }}" style="color:var(--color-primary); font-weight:600; min-height:44px; display:inline-flex; align-items:center;">{{ COMPANY_EMAIL }}</a>
+      </div>
+      <div style="font-size:0.82rem; color:var(--color-text-dark); display:flex; flex-direction:column; gap:0.25rem;">
+        <a href="tel:+919773140138" style="color:var(--color-text-dark); min-height:44px; display:inline-flex; align-items:center;">+91 9773140138</a>
+        <a href="tel:+917383311112" style="color:var(--color-text-dark); min-height:44px; display:inline-flex; align-items:center;">+91 73833 11112</a>
       </div>
     </div>
-  </div>
+  </aside>
 
   <!-- =========================================================================
-       3. MAIN CONTENT CONTAINER
+       3. MAIN CONTENT BLOCK
        ========================================================================= -->
   <main id="main-content">
     {% block content %}{% endblock %}
   </main>
 
   <!-- =========================================================================
-       4. FOOTER
+       4. CORPORATE FOOTER
        ========================================================================= -->
-  <footer class="site-footer">
+  <footer class="site-footer" id="site-footer">
     <div class="container container-wide">
       <div class="footer-grid">
-        <!-- Col 1: Brand & Slogan -->
-        <div class="footer-brand">
-          <div class="footer-logo-row">
-            <picture>
-              <source srcset="{% static 'images/branding/logo.webp' %}" type="image/webp">
-              <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Logo" class="footer-logo" width="42" height="42">
-            </picture>
-            <div>
-              <div class="footer-brand-name">{{ COMPANY_NAME }}</div>
-              <div class="footer-tagline">{{ COMPANY_TAGLINE }}</div>
-            </div>
+        <!-- Col 1: Identity & Description -->
+        <div>
+          <div class="footer-brand">
+            <span class="brand-name">Kailash <span>Global</span> Impex</span>
+            <span class="brand-sub">Export Enterprise &bull; India</span>
           </div>
           <p class="footer-about-text">
             An established B2B agricultural export enterprise based in Visnagar, Gujarat, India. Dedicated to disciplined sourcing, customer-specified product grading, and reliable international commodity shipments.
           </p>
           <div style="margin-top:1rem; display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
-            <a href="https://wa.me/919773140138" target="_blank" rel="noopener noreferrer" style="color:#25d366; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; background:rgba(37,211,102,0.1); padding:0.4rem 0.8rem; border-radius:6px; border:1px solid rgba(37,211,102,0.3);" title="WhatsApp Direct">
+            <a href="https://wa.me/919773140138" target="_blank" rel="noopener noreferrer" style="color:#25d366; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; background:rgba(37,211,102,0.1); padding:0.5rem 0.8rem; border-radius:6px; border:1px solid rgba(37,211,102,0.3); min-height:44px;" title="WhatsApp Direct">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
               </svg>
               <span>WhatsApp</span>
             </a>
-            <a href="{{ COMPANY_INSTAGRAM }}" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold-bright); display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; background:rgba(212,175,55,0.1); padding:0.4rem 0.8rem; border-radius:6px; border:1px solid rgba(212,175,55,0.3);" title="Instagram">
+            <a href="{{ COMPANY_INSTAGRAM }}" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold-bright); display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; background:rgba(212,175,55,0.1); padding:0.5rem 0.8rem; border-radius:6px; border:1px solid rgba(212,175,55,0.3); min-height:44px;" title="Instagram">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -274,7 +289,7 @@
               </svg>
               <span>Instagram</span>
             </a>
-            <a href="{{ COMPANY_LINKEDIN }}" target="_blank" rel="noopener noreferrer" style="color:#60a5fa; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; background:rgba(96,165,250,0.12); padding:0.4rem 0.8rem; border-radius:6px; border:1px solid rgba(96,165,250,0.35);" title="LinkedIn Company Profile">
+            <a href="{{ COMPANY_LINKEDIN }}" target="_blank" rel="noopener noreferrer" style="color:#60a5fa; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.88rem; background:rgba(96,165,250,0.12); padding:0.5rem 0.8rem; border-radius:6px; border:1px solid rgba(96,165,250,0.35); min-height:44px;" title="LinkedIn Company Profile">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.68 1.68 0 1 0-.01-3.36 1.68 1.68 0 0 0 .01 3.36zm1.39 9.74v-8.37H5.07v8.37h2.78z"/>
               </svg>
@@ -285,7 +300,7 @@
 
         <!-- Col 2: Quick Links -->
         <div>
-          <h4 class="footer-col-title">Navigation</h4>
+          <h3 class="footer-col-title">Navigation</h3>
           <ul class="footer-links">
             <li><a href="{% url 'core:home' %}">Home</a></li>
             <li><a href="{% url 'core:about' %}">About Company</a></li>
@@ -298,7 +313,7 @@
 
         <!-- Col 3: Products -->
         <div>
-          <h4 class="footer-col-title">Products</h4>
+          <h3 class="footer-col-title">Products</h3>
           <ul class="footer-links">
             <li><a href="{% url 'core:product_detail' slug='raw-tobacco-leaf' %}">Raw Tobacco Leaf</a></li>
             <li><a href="{% url 'core:product_detail' slug='moringa-leaf-powder' %}">Moringa Leaf Powder</a></li>
@@ -307,7 +322,7 @@
 
         <!-- Col 4: Verified Contact -->
         <div>
-          <h4 class="footer-col-title">Trade Headquarters</h4>
+          <h3 class="footer-col-title">Trade Headquarters</h3>
           <ul class="footer-contact-list">
             <li class="footer-contact-item" style="display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:1rem;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:3px;">
@@ -327,17 +342,17 @@
               </svg>
               <div style="font-size:0.88rem; color:#cad8d0;">
                 <strong style="color:#ffffff;">Inquiries Email:</strong><br>
-                <a href="mailto:{{ COMPANY_EMAIL }}" style="color:#ffffff; text-decoration:underline;">{{ COMPANY_EMAIL }}</a>
+                <a href="mailto:{{ COMPANY_EMAIL }}" style="color:#ffffff; text-decoration:underline; min-height:44px; display:inline-flex; align-items:center;">{{ COMPANY_EMAIL }}</a>
               </div>
             </li>
             <li class="footer-contact-item" style="display:flex; gap:0.75rem; align-items:flex-start;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:3px;">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
               </svg>
-              <div style="font-size:0.88rem; color:#cad8d0;">
-                <strong style="color:#ffffff;">Direct Trade Desks:</strong><br>
-                <a href="tel:+919773140138" style="color:#ffffff;">+91 9773140138</a><br>
-                <a href="tel:+917383311112" style="color:#ffffff;">+91 73833 11112</a>
+              <div style="font-size:0.88rem; color:#cad8d0; display:flex; flex-direction:column;">
+                <strong style="color:#ffffff;">Direct Trade Desks:</strong>
+                <a href="tel:+919773140138" style="color:#ffffff; min-height:44px; display:inline-flex; align-items:center; padding:0.1rem 0;">+91 9773140138</a>
+                <a href="tel:+917383311112" style="color:#ffffff; min-height:44px; display:inline-flex; align-items:center; padding:0.1rem 0;">+91 73833 11112</a>
               </div>
             </li>
           </ul>

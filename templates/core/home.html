@@ -4,8 +4,9 @@
 {% block title %}{{ page_title|default:"Kailash Global Impex | B2B Agricultural Export Enterprise India" }}{% endblock %}
 
 {% block extra_head %}
-<!-- Preload LCP Hero Image (Slide 1) -->
-<link rel="preload" as="image" href="{% static 'images/hero/port_hero_1.webp' %}" type="image/webp" fetchpriority="high">
+<!-- Preload Responsive LCP Hero Image (Slide 1) -->
+<link rel="preload" as="image" href="{% static 'images/hero/port_hero_1-mobile.webp' %}" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
+<link rel="preload" as="image" href="{% static 'images/hero/port_hero_1.webp' %}" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
 
 <!-- Structured Data: WebSite JSON-LD -->
 <script type="application/ld+json">
@@ -32,9 +33,9 @@
 <section class="hero-section hero-port-section" id="hero">
   <!-- International Trade & Maritime Port Visual Atmosphere (Purely visual representation) -->
   <div class="hero-slideshow-container" aria-hidden="true">
-    <div class="hero-slide active" style="background-image: url('{% static 'images/hero/port_hero_1.webp' %}');"></div>
-    <div class="hero-slide" style="background-image: url('{% static 'images/hero/port_hero_2.webp' %}');"></div>
-    <div class="hero-slide" style="background-image: url('{% static 'images/hero/port_hero_3.webp' %}');"></div>
+    <div class="hero-slide active hero-slide-1"></div>
+    <div class="hero-slide hero-slide-2"></div>
+    <div class="hero-slide hero-slide-3"></div>
     <div class="hero-overlay"></div>
   </div>
 
@@ -132,16 +133,16 @@
         <div class="product-image-box">
           {% if product.slug == 'raw-tobacco-leaf' and not product.image %}
             <picture>
-              <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="600" height="400" loading="lazy">
+              <source srcset="{% static 'images/products/tobacco-thumb.webp' %} 500w, {% static 'images/products/tobacco.webp' %} 900w" sizes="(max-width: 768px) 100vw, 400px" type="image/webp">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif product.slug == 'moringa-leaf-powder' and not product.image %}
             <picture>
-              <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="600" height="400" loading="lazy">
+              <source srcset="{% static 'images/products/moringa-thumb.webp' %} 500w, {% static 'images/products/moringa.webp' %} 900w" sizes="(max-width: 768px) 100vw, 400px" type="image/webp">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="500" height="350" loading="lazy" decoding="async">
             </picture>
           {% elif product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="600" height="400" loading="lazy">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="500" height="350" loading="lazy" decoding="async">
           {% endif %}
           <div class="product-badge">Origin: {{ product.origin }}</div>
         </div>

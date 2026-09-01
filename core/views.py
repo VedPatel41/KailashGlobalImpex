@@ -205,7 +205,7 @@ Disallow: /admin-panel/
 
 Sitemap: https://kailashglobalimpex.com/sitemap.xml
 """
-    return HttpResponse(content, content_type="text/plain; charset=utf-8")
+    return HttpResponse(content, content_type="text/plain")
 
 
 def sitemap_xml(request):
