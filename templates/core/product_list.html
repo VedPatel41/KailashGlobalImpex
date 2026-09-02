@@ -4,6 +4,9 @@
 {% block title %}{{ page_title|default:"Agricultural Export Products | Kailash Global Impex" }}{% endblock %}
 
 {% block extra_head %}
+<!-- Preload Catalog LCP Image -->
+<link rel="preload" as="image" href="{% static 'images/products/tobacco.webp' %}" type="image/webp" fetchpriority="high">
+
 <!-- Structured Data: CollectionPage JSON-LD -->
 <script type="application/ld+json">
 {
@@ -60,20 +63,20 @@
   <div class="container container-wide">
     <div class="products-grid">
       {% for product in products %}
-      <article class="product-card">
+      <article class="product-card reveal-on-scroll">
         <div class="product-image-box">
           {% if product.slug == 'raw-tobacco-leaf' %}
             <picture>
               <source srcset="{% static 'images/products/tobacco.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="600" height="400" loading="lazy" decoding="async">
+              <img src="{% static 'images/products/tobacco.png' %}" alt="Export-grade raw tobacco leaves in bulk" width="600" height="400" {% if forloop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
             </picture>
           {% elif product.slug == 'moringa-leaf-powder' %}
             <picture>
               <source srcset="{% static 'images/products/moringa.webp' %}" type="image/webp">
-              <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="600" height="400" loading="lazy" decoding="async">
+              <img src="{% static 'images/products/moringa.png' %}" alt="Pure green moringa leaf powder" width="600" height="400" {% if forloop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
             </picture>
           {% elif product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="600" height="400" loading="lazy" decoding="async">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="600" height="400" {% if forloop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
           {% endif %}
           <div class="product-badge">Origin: {{ product.origin }}</div>
         </div>
@@ -103,7 +106,7 @@
 
 <!-- Buyer-Specific Sourcing Advisory -->
 <section class="section section-soft">
-  <div class="container container-narrow text-center">
+  <div class="container container-narrow text-center reveal-on-scroll">
     <span class="section-tag">Commercial Procurement</span>
     <h2 class="section-title">Buyer-Focused Agricultural Sourcing</h2>
     <p style="color: var(--text-body); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem;">

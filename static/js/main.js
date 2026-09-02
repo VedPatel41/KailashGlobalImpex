@@ -5,12 +5,70 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initIntroAnimation();
   initStickyHeader();
   initMobileDrawer();
   initHeroSlideshow();
   initTradeCorridorsCanvas();
+  initScrollAnimations();
   initInquiryFormAjax();
 });
+
+/* ==========================================================================
+   1. STARTUP INTRO ANIMATION (~3.5s sequence with background loading)
+   ========================================================================== */
+function initIntroAnimation() {
+  const overlay = document.getElementById('intro-overlay');
+  if (!overlay) return;
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasSeenIntro = sessionStorage.getItem('kgi_intro_played');
+
+  if (prefersReduced || hasSeenIntro) {
+    overlay.remove();
+    return;
+  }
+
+  // After 3.8s, the CSS keyframe fadeout is complete; record session state & remove DOM node
+  setTimeout(() => {
+    sessionStorage.setItem('kgi_intro_played', 'true');
+    if (overlay && overlay.parentNode) {
+      overlay.remove();
+    }
+  }, 3800);
+}
+
+/* ==========================================================================
+   2. SCROLL REVEAL ANIMATIONS
+   ========================================================================== */
+function initScrollAnimations() {
+  const elements = document.querySelectorAll('.reveal-on-scroll');
+  if (!elements.length) return;
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    elements.forEach(el => el.classList.add('revealed'));
+    return;
+  }
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    elements.forEach(el => observer.observe(el));
+  } else {
+    elements.forEach(el => el.classList.add('revealed'));
+  }
+}
 
 /* ==========================================================================
    HERO PORT BACKGROUND SLIDESHOW (Subtle 7s Crossfade & Ken Burns)

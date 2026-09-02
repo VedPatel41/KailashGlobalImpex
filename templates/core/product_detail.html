@@ -4,6 +4,15 @@
 {% block title %}{{ page_title|default:product.name }}{% endblock %}
 
 {% block extra_head %}
+<!-- Preload Product Detail Hero Image -->
+{% if product.slug == 'raw-tobacco-leaf' %}
+  <link rel="preload" as="image" href="{% static 'images/products/tobacco.webp' %}" type="image/webp" fetchpriority="high">
+{% elif product.slug == 'moringa-leaf-powder' %}
+  <link rel="preload" as="image" href="{% static 'images/products/moringa.webp' %}" type="image/webp" fetchpriority="high">
+{% elif product.image %}
+  <link rel="preload" as="image" href="{{ product.image.url }}" fetchpriority="high">
+{% endif %}
+
 <!-- Structured Data: ItemPage & BreadcrumbList JSON-LD (B2B Commodity Specification) -->
 <script type="application/ld+json">
 {

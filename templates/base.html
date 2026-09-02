@@ -48,6 +48,13 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+  <!-- Immediate Non-Blocking Intro Overlay State Check -->
+  <script>
+    if (sessionStorage.getItem('kgi_intro_played') || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      document.documentElement.classList.add('intro-skipped');
+    }
+  </script>
   
   <!-- Structured Data: Organization JSON-LD -->
   <script type="application/ld+json">
@@ -123,7 +130,26 @@
 <body>
 
   <!-- =========================================================================
-       1. HEADER & NAVIGATION
+       1. INTRO STARTUP ANIMATION OVERLAY (~3.5s sequence with background loading)
+       ========================================================================= -->
+  {% block intro_overlay %}
+  {% if request.resolver_match.url_name == 'home' %}
+  <div id="intro-overlay" aria-hidden="true">
+    <div class="intro-content">
+      <picture>
+        <source srcset="{% static 'images/branding/logo.webp' %}" type="image/webp">
+        <img src="{% static 'images/branding/logo.png' %}" alt="Kailash Global Impex Official Logo" class="intro-logo" width="80" height="80" decoding="async">
+      </picture>
+      <div class="intro-title">Kailash Global Impex</div>
+      <p class="intro-tagline">Connecting Markets, Delivering Excellence</p>
+      <div class="intro-line"></div>
+    </div>
+  </div>
+  {% endif %}
+  {% endblock %}
+
+  <!-- =========================================================================
+       2. HEADER & NAVIGATION
        ========================================================================= -->
   <header class="site-header" id="site-header">
     <div class="container container-wide">
